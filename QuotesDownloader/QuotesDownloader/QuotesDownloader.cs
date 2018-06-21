@@ -5,34 +5,26 @@
     using System.IO;
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
-    using SoftFX.Extended;
-    using SoftFX.Extended.Events;
-    using SoftFX.Extended.Storage;
+    using TickTrader.FDK.Common;
+    using TickTrader.FDK.QuoteStore;
 
     public partial class QuotesDownloader : Form
     {
+
         #region Members
 
-        readonly FixConnectionStringBuilder fixConnectionStringBuilder = Settings.Default.ConnectionParams;
-        DataFeed datafeed;
+        Client quoteClient;
         Downloader downloader;
 
         #endregion
 
         public QuotesDownloader()
         {
-            if (this.fixConnectionStringBuilder == null)
-            {
-                this.fixConnectionStringBuilder = new FixConnectionStringBuilder();
-            }
             this.InitializeComponent();
-
             this.Text = string.Format("{0} (FDK {1})", this.Text, Library.Version);
 
-            foreach (var element in StorageProvider.Providers)
-            {
-                this.m_storageType.Items.Add(element.Key);
-            }
+            this.m_storageType.Items.Add("text");
+            this.m_storageType.Items.Add("hdf5");
             this.m_storageType.SelectedIndex = 0;
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -41,19 +33,13 @@
             this.m_location.Text = path;
             this.m_quotesType.SelectedIndex = 0;
 
-            this.m_address.Text = this.fixConnectionStringBuilder.Address;
-            this.m_username.Text = this.fixConnectionStringBuilder.Username;
-            this.m_password.Text = this.fixConnectionStringBuilder.Password;
-            this.m_port.Text = this.fixConnectionStringBuilder.Port.ToString();
-            this.m_ssl.Checked = this.fixConnectionStringBuilder.SecureConnection;
-
-
             var utcNow = DateTime.UtcNow;
             var to = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day);
             to = to.AddDays(-7);
             var from = to.AddDays(-7);
             this.m_dateAndTimeFrom.Value = from;
             this.m_dateAndTimeTo.Value = to;
+            this.m_port.Text = "5050";
             this.ApplyDisconnectedState();
         }
 
@@ -86,25 +72,6 @@
             this.m_toolTip.Hide(this.m_port);
         }
 
-        void OnRetriesValidating(object sender, CancelEventArgs e)
-        {
-            var st = this.m_retries.Text;
-            var port = 0;
-
-            if (!Int32.TryParse(st, out port) || (port <= 0))
-            {
-                var message = string.Format("You should enter a positive integer number");
-                this.m_toolTip.ToolTipTitle = "Invalid retries number";
-                this.m_toolTip.Show(message, this.m_retries);
-                e.Cancel = true;
-            }
-        }
-
-        void OnRetriesKeyDown(object sender, KeyEventArgs e)
-        {
-            this.m_toolTip.Hide(this.m_retries);
-        }
-
         void OnLogClear(object sender, EventArgs e)
         {
             this.m_log.Items.Clear();
@@ -132,7 +99,7 @@
 
         void OnConnection(object sender, EventArgs e)
         {
-            if (this.datafeed == null)
+            if (this.quoteClient == null)
                 this.Connect();
             else
                 this.Disconnect();
@@ -142,28 +109,25 @@
         {
             try
             {
-                this.Log("Data feed initialization");
-                this.fixConnectionStringBuilder.Address = this.m_address.Text;
-                this.fixConnectionStringBuilder.Username = this.m_username.Text;
-                this.fixConnectionStringBuilder.Password = this.m_password.Text;
-                this.fixConnectionStringBuilder.Port = Convert.ToInt32(this.m_port.Text);
-                this.fixConnectionStringBuilder.SecureConnection = this.m_ssl.Checked;
-                var connectionString = this.fixConnectionStringBuilder.ToString();
-                var dataFeed = new DataFeed(connectionString, "QuotesDownloader");
-                dataFeed.Logon += this.OnLogon;
-                dataFeed.Logout += this.OnLogout;
-                dataFeed.SymbolInfo += this.OnSymbolInfo;
+                this.Log("Quote Feed Client initialization");
+                this.quoteClient = new Client("QuotesDownloader", port: Convert.ToInt32(this.m_port.Text));
+                this.quoteClient.LoginResultEvent += new Client.LoginResultDelegate(this.OnLogon);
+                this.quoteClient.LogoutEvent += new Client.LogoutDelegate(this.OnLogout);
+                this.quoteClient.DisconnectEvent += new Client.DisconnectDelegate(this.OnDisconnect);
+                this.quoteClient.SymbolListResultEvent += new Client.SymbolListResultDelegate(this.OnSymbolInfo);
                 this.Log("Connecting...");
-                dataFeed.Start();
-                this.datafeed = dataFeed;
+                this.quoteClient.Connect(this.m_address.Text, -1);
+                this.quoteClient.Login(this.m_username.Text, this.m_password.Text, "", "", "", -1);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Disconnect();
                 return;
             }
 
             this.ApplyConnectingState();
+            quoteClient.GetSymbolList(-1);
         }
 
         void ApplyConnectingState()
@@ -182,14 +146,15 @@
             try
             {
                 this.Log("Disconnecting...");
-                if (datafeed != null)
+                
+                if (quoteClient != null)
                 {
-                    this.datafeed.Stop();
-                    this.datafeed.Dispose();
-                    this.datafeed = null;
+                    this.quoteClient.Disconnect("Disconnecting");
+                    this.quoteClient.Dispose();
+                    this.quoteClient = null;
                 }
 
-                this.Log("Data feed is disconnected");
+                this.Log("Quote Feed Client is disconnected");
             }
             catch (Exception ex)
             {
@@ -207,51 +172,74 @@
             this.m_symbols.Items.Clear();
         }
 
-        #region Data Feed Events
+        #region Client Events
 
-        void OnLogon(object sender, LogonEventArgs e)
+        void OnLogon(Client quoteFeedClient, object sender)
         {
             if (this.InvokeRequired)
             {
-                this.InvokeInPrimaryThread(this.OnLogon, sender, e);
+                this.InvokeInPrimaryThread(OnLogon, quoteFeedClient, sender);
                 return;
             }
-            this.Log("Data feed is connected");
+            this.Log("Quote Feed Client is connected");
         }
 
-        void OnSymbolInfo(object sender, SymbolInfoEventArgs e)
+        void OnDisconnect(Client quoteFeedClient, string text)
         {
             if (this.InvokeRequired)
             {
-                this.InvokeInPrimaryThread(OnSymbolInfo, sender, e);
+                this.InvokeInPrimaryThread(OnDisconnect, quoteFeedClient, text);
+                return;
+            }
+
+            try
+            {
+                Console.WriteLine("Disconnected : " + text);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Error : " + exception.Message);
+            }
+        }
+
+        public void OnLogout(Client quoteFeedClient, LogoutInfo info)
+        {
+            if (this.InvokeRequired)
+            {
+                this.InvokeInPrimaryThread(OnLogout, quoteFeedClient, info);
+                return;
+            }
+
+            try
+            {
+                Console.WriteLine("Logout : " + info.Message);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Error : " + exception.Message);
+            }
+        }
+
+        void OnSymbolInfo(Client quoteFeedClient, object sender, string[] symbols)
+        {
+
+            if (this.InvokeRequired)
+            {
+                this.InvokeInPrimaryThread(OnSymbolInfo, quoteFeedClient, sender, symbols);
                 return;
             }
 
             this.m_symbols.Items.Clear();
-            foreach (var element in e.Information)
+            foreach (var symbol in symbols)
             {
-                this.m_symbols.Items.Add(element.Name);
+                this.m_symbols.Items.Add(symbol);
             }
-            if (e.Information.Length > 0)
+            if (symbols.Length > 0)
             {
                 this.m_symbols.SelectedIndex = 0;
             }
             this.Log("Symbols information is received");
             this.ApplyConnectedState();
-        }
-
-        void OnLogout(object sender, LogoutEventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.InvokeInPrimaryThread(OnLogout, sender, e);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(e.Text))
-                this.Log("Logout event is received; reason = {0}", e.Reason);
-            else
-                this.Log("Logout event is received; reason = {0}; Text = {1}", e.Reason, e.Text);
         }
 
         #endregion
@@ -262,21 +250,19 @@
         {
             if (this.downloader == null)
             {
-                var storageType = StorageProvider.Providers[m_storageType.SelectedItem.ToString()];
+                var outputType = m_storageType.SelectedItem.ToString();
                 var location = this.m_location.Text;
                 var symbol = this.m_symbols.Text;
                 var from = this.m_dateAndTimeFrom.Value;
                 var to = this.m_dateAndTimeTo.Value;
-                int retries = 10;
-                Int32.TryParse(this.m_retries.Text, out retries);
 
                 if (this.m_quotesType.SelectedIndex == 0)
                 {
-                    this.downloader = new Downloader(this.datafeed, storageType, location, symbol, from, to, false, retries);
+                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, false);
                 }
                 else if (this.m_quotesType.SelectedIndex == 1)
                 {
-                    this.downloader = new Downloader(this.datafeed, storageType, location, symbol, from, to, true, retries);
+                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, true);
                 }
                 else
                 {
@@ -293,7 +279,7 @@
                     var stBarPeriod = match.Groups[2].Value;
 
                     var barPeriod = new BarPeriod(stBarPeriod);
-                    this.downloader = new Downloader(this.datafeed, storageType, location, symbol, from, to, priceType, barPeriod, retries);
+                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, priceType, barPeriod);
 
                 }
 
@@ -308,13 +294,12 @@
             }
             else
             {
-                this.downloader.Stop();
                 this.downloader = null;
                 this.m_download.Text = "Download";
                 this.m_browse.Enabled = true;
                 this.m_symbols.Enabled = true;
                 this.m_quotesType.Enabled = true;
-                this.m_storageType.Enabled = false;
+                this.m_storageType.Enabled = true;
             }
         }
 
@@ -334,6 +319,7 @@
             this.m_browse.Enabled = true;
             this.m_symbols.Enabled = true;
             this.m_quotesType.Enabled = true;
+            this.m_storageType.Enabled = true;
         }
 
         void OnMessage(object sender, EventArgs<string> e)
@@ -349,10 +335,10 @@
 
         void OnClosed(object sender, FormClosedEventArgs e)
         {
-            if (this.datafeed != null)
+            if (this.quoteClient != null)
             {
-                this.datafeed.Stop();
-                this.datafeed.Dispose();
+                this.quoteClient.Disconnect("QuotesDownloader");
+                this.quoteClient.Dispose();
             }
         }
 
@@ -408,6 +394,11 @@
         void InvokeInPrimaryThread<A0, A1>(Action<A0, A1> func, A0 a0, A1 a1)
         {
             this.DoInvokeInPrimaryThread(func, a0, a1);
+        }
+
+        void InvokeInPrimaryThread<A0, A1, A2>(Action<A0, A1, A2> func, A0 a0, A1 a1, A2 a2)
+        {
+            this.DoInvokeInPrimaryThread(func, a0, a1, a2);
         }
 
         void DoInvokeInPrimaryThread(Delegate func, params object[] arguments)

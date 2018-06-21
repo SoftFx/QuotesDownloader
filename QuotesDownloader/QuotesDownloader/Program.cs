@@ -2,7 +2,6 @@
 {
     using System;
     using System.Windows.Forms;
-    using SoftFX.Extended;
 
     static class Program
     {
@@ -10,20 +9,21 @@
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            
-            try
-            {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new QuotesDownloader());
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message, "QuotesDownloader", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
+            if (args.Length > 0)
+                ConsoleDownloader.ConsoleMain(args);
+            else
+                try
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new QuotesDownloader());
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "QuotesDownloader", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
         }
     }
 }

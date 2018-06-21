@@ -40,8 +40,6 @@
             this.m_connection = new System.Windows.Forms.Button();
             this.m_symbols = new System.Windows.Forms.ComboBox();
             this.m_groups = new System.Windows.Forms.GroupBox();
-            this.m_retries = new System.Windows.Forms.TextBox();
-            this.m_retriesLabel = new System.Windows.Forms.Label();
             this.m_storageType = new System.Windows.Forms.ComboBox();
             this.m_quotesType = new System.Windows.Forms.ComboBox();
             this.m_log = new System.Windows.Forms.ListBox();
@@ -71,9 +69,9 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(381, 80);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(70, 13);
+            label1.Size = new System.Drawing.Size(65, 13);
             label1.TabIndex = 1;
-            label1.Text = "Storage type:";
+            label1.Text = "Output type:";
             // 
             // m_from
             // 
@@ -156,8 +154,6 @@
             // 
             // m_groups
             // 
-            this.m_groups.Controls.Add(this.m_retries);
-            this.m_groups.Controls.Add(this.m_retriesLabel);
             this.m_groups.Controls.Add(this.m_storageType);
             this.m_groups.Controls.Add(label1);
             this.m_groups.Controls.Add(this.m_quotesType);
@@ -170,26 +166,6 @@
             this.m_groups.Size = new System.Drawing.Size(626, 159);
             this.m_groups.TabIndex = 10;
             this.m_groups.TabStop = false;
-            // 
-            // m_retries
-            // 
-            this.m_retries.Location = new System.Drawing.Point(251, 72);
-            this.m_retries.Name = "m_retries";
-            this.m_retries.Size = new System.Drawing.Size(100, 20);
-            this.m_retries.TabIndex = 11;
-            this.m_retries.Text = "10";
-            this.m_retries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnRetriesKeyDown);
-            this.m_retries.Validating += new System.ComponentModel.CancelEventHandler(this.OnRetriesValidating);
-            // 
-            // m_retriesLabel
-            // 
-            this.m_retriesLabel.AutoSize = true;
-            this.m_retriesLabel.Location = new System.Drawing.Point(146, 76);
-            this.m_retriesLabel.Name = "m_retriesLabel";
-            this.m_retriesLabel.Size = new System.Drawing.Size(40, 13);
-            this.m_retriesLabel.TabIndex = 10;
-            this.m_retriesLabel.Text = "Retries";
-            this.m_retriesLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // m_storageType
             // 
@@ -443,8 +419,6 @@
 		private System.Windows.Forms.Label m_portLabel;
 		private System.Windows.Forms.ToolTip m_toolTip;
 		private System.Windows.Forms.ComboBox m_storageType;
-        private System.Windows.Forms.Label m_retriesLabel;
-        private System.Windows.Forms.TextBox m_retries;
     }
 }
 

@@ -58,39 +58,5 @@ namespace QuotesDownloader {
                 this["Password"] = value;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<FixConnectionStringBuilder xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <Username />
-  <Password />
-  <DeviceId />
-  <AppId>FDK</AppId>
-  <AppSessionId />
-  <FixVersion>FIX.4.4</FixVersion>
-  <Address />
-  <Port>5003</Port>
-  <SenderCompId />
-  <TargetCompId>EXECUTOR</TargetCompId>
-  <SecureConnection>true</SecureConnection>
-  <FixLogDirectory />
-  <FixEventsFileName />
-  <FixMessagesFileName />
-  <DecodeLogFixMessages>true</DecodeLogFixMessages>
-  <ProtocolVersion>ext.1.7</ProtocolVersion>
-  <ExcludeMessagesFromLogs>W</ExcludeMessagesFromLogs>
-  <EnableNetworkStatistics>false</EnableNetworkStatistics>
-  <ProxyType />
-  <ProxyAddress />
-  <ProxyPort>0</ProxyPort>
-  <ProxyUserName />
-  <ProxyPassword />
-</FixConnectionStringBuilder>")]
-        public global::SoftFX.Extended.FixConnectionStringBuilder ConnectionParams {
-            get {
-                return ((global::SoftFX.Extended.FixConnectionStringBuilder)(this["ConnectionParams"]));
-            }
-        }
     }
 }
