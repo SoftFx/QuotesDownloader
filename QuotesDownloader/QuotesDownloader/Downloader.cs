@@ -106,9 +106,9 @@
         {
             QuoteDepth marketDepth = includeLevel2 ? QuoteDepth.Level2 : QuoteDepth.Top;
             DownloadQuotesEnumerator enumerator = quoteClient.DownloadQuotes(symbol, marketDepth, from, to, -1);
-            string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.txt", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
             if (outputType == "text")
             {
+                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.txt", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
                     for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
@@ -128,6 +128,7 @@
             }
             else
             {
+                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
                 var quotesData = new List<Quote>();
@@ -138,10 +139,11 @@
                     return;
 
                 double[,,] quotesArray = new double[quotesData.Count, 2, quotesData[0].Bids.Count * 2];
-                string[] dateQuotesArray = new string[quotesData.Count];
+                long[] dateQuotesArray = new long[quotesData.Count];
                 for (int i = 0; i < quotesData.Count; i++)
                 {
-                    dateQuotesArray[i] = quotesData[i].CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                    long dateTimestamp = (long)(quotesData[i].CreatingTime.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+                    dateQuotesArray[i] = dateTimestamp;
                     int j = 0;
                     foreach (QuoteEntry entry in quotesData[i].Bids)
                     {
@@ -177,7 +179,7 @@
                 H5S.close(quotesSpaceId);
                 H5D.close(quotesSetId);
 
-                H5DataTypeId dateQuotesTypeId = H5T.create(H5T.CreateClass.STRING, 8);
+                H5DataTypeId dateQuotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_LLONG);
                 H5DataSpaceId dateQuotesSpaceId = H5S.create_simple(1, new long[] { quotesData.Count }, new long[] { (long)H5S.H5SType.UNLIMITED });
                 createChunked = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
                 linkCreationDefaults = H5P.create(H5P.PropertyListClass.LINK_CREATE);
@@ -188,7 +190,7 @@
                 H5D.setExtent(dateQuotesSetId, new long[] { quotesData.Count });
                 newSpace = H5D.getSpace(dateQuotesSetId);
                 H5S.selectHyperslab(newSpace, H5S.SelectOperator.SET, new long[] { 0 }, new long[] { quotesData.Count });
-                H5D.write(dateQuotesSetId, dateQuotesTypeId, new H5Array<string>(dateQuotesArray));
+                H5D.write(dateQuotesSetId, dateQuotesTypeId, new H5Array<long>(dateQuotesArray));
 
                 H5P.close(createChunked);
                 H5P.close(linkCreationDefaults);
@@ -196,7 +198,6 @@
                 H5S.close(newSpace);
                 H5S.close(dateQuotesSpaceId);
                 H5D.close(dateQuotesSetId);
-                H5T.close(dateQuotesTypeId);
 
                 H5F.close(fileId);
                 this.Log("Quotes are downloaded successfully");
@@ -206,9 +207,9 @@
         void DownloadBars()
         {
             DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
-            string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3}.h5", symbol, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
             if (outputType == "text")
             {
+                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.txt", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
@@ -218,6 +219,7 @@
             }
             else
             {
+                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.h5", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
                 var barsData = new List<Bar>();
@@ -228,14 +230,15 @@
                     return;
 
                 double[,] barsArray = new double[barsData.Count, 5];
-                string[,] dataBarsArray = new string[barsData.Count, 2];
-                string priceTypeString = "Bid";
+                long[,] dataBarsArray = new long[barsData.Count, 2];
+                long priceTypeString = 0;
                 if (priceType == PriceType.Ask)
-                    priceTypeString = "Ask";
+                    priceTypeString = 1;
                 for (int i=0; i< barsData.Count; i++)
                 {
                     dataBarsArray[i, 0] = priceTypeString;
-                    dataBarsArray[i, 1] = barsData[i].From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                    long dateTimestamp = (long)(barsData[i].From.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+                    dataBarsArray[i, 1] = dateTimestamp;
                     barsArray[i, 0] = barsData[i].Volume;
                     barsArray[i, 1] = barsData[i].Open;
                     barsArray[i, 2] = barsData[i].Close;
@@ -246,7 +249,7 @@
                 H5DataTypeId barsTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_DOUBLE);
                 WriteDataToNewFile(fileId, "Bars", barsArray, barsData.Count, 5, barsTypeId);
 
-                H5DataTypeId dataBarsTypeId = H5T.create(H5T.CreateClass.STRING, 8);
+                H5DataTypeId dataBarsTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_LLONG);
                 WriteDataToNewFile(fileId, "DataBars", dataBarsArray, barsData.Count, 2, dataBarsTypeId);
 
                 H5F.close(fileId);
