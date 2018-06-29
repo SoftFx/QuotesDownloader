@@ -1,4 +1,3 @@
-import numpy as np
 import h5py
 import datetime
 import pytz
@@ -28,10 +27,17 @@ class QuoteEntry:
         self.volume = volume
 
 
-def read_bars(filename):
+def read_bars(filename, index_from=0, index_to=-1):
     f = h5py.File(filename, 'r')
-    bars = list(f["Bars"])
-    bars_data = list(f["DataBars"])
+    bars_dataset = f["Bars"]
+    data_bars_dataset = f["DataBars"]
+
+    if index_to == -1:
+        index_to = bars_dataset.shape[0]
+
+    bars = list(bars_dataset[index_from:index_to])
+    bars_data = list(data_bars_dataset[index_from:index_to])
+
     bars_list = []
     for i in range(len(bars)):
         bars_list.append(Bar(date_from=datetime.datetime.fromtimestamp(bars_data[i][1] / 1e3, tz=pytz.UTC),
@@ -45,10 +51,17 @@ def read_bars(filename):
     return bars_list
 
 
-def read_quotes(filename):
+def read_quotes(filename, index_from=0, index_to=-1):
     f = h5py.File(filename, 'r')
-    quotes = list(f["Quotes"])
-    quotes_date = list(f["DateQuotes"])
+    quotes_dataset = f["Quotes"]
+    date_quotes_dataset = f["DateQuotes"]
+
+    if index_to == -1:
+        index_to = quotes_dataset.shape[0]
+
+    quotes = list(quotes_dataset[index_from:index_to])
+    quotes_date = list(date_quotes_dataset[index_from:index_to])
+
     quotes_list = []
     for i in range(len(quotes)):
         asks = []
@@ -65,9 +78,44 @@ def read_quotes(filename):
     return quotes_list
 
 
-if __name__ == "__main__":
-    filename = 'AUDJPY 20180608 20180609.h5'
+def get_datetime_indices(filename, dataset_name, datetime_from, datetime_to):
     f = h5py.File(filename, 'r')
-    quotes_list = read_quotes(filename)
+    dataset = f[dataset_name]
+    deep = True if len(dataset.shape) > 1 else False
+    index_from = bin_search(dataset, datetime_from.timestamp() * 1000, True, deep)
+    index_to = bin_search(dataset, datetime_to.timestamp() * 1000, False, deep)
+    f.close()
+    return index_from, index_to
+
+
+def bin_search(dataset, value, lte, deep):
+    lower_bound = 0
+    upper_bound = dataset.shape[0]
+    while lower_bound != upper_bound:
+        compared_value = (lower_bound + upper_bound) // 2
+        pivot = dataset[compared_value, 1] if deep else dataset[compared_value]
+        cmp = value <= pivot if lte else value < pivot
+        if cmp:
+            upper_bound = compared_value
+        else:
+            lower_bound = compared_value + 1
+    return lower_bound
+
+
+if __name__ == "__main__":
+    # Quotes selective reading (by datetime)
+    filename = 'AUDJPY 20180608 20180609.h5'
+    datetime_from = datetime.datetime(2018, 6, 8, 5, 0, 0, tzinfo=pytz.UTC)
+    datetime_to = datetime.datetime(2018, 6, 8, 9, 0, 0, tzinfo=pytz.UTC)
+    index_from, index_to = get_datetime_indices(filename, "DateQuotes", datetime_from, datetime_to)
+    quotes = read_quotes(filename, index_from, index_to)
+
+    # Bars selective reading (by datetime)
+    filename = 'EURUSD Bid S10  20180615  20180616.h5'
+    datetime_from = datetime.datetime(2018, 6, 15, 5, 0, 0, tzinfo=pytz.UTC)
+    datetime_to = datetime.datetime(2018, 6, 15, 9, 0, 0, tzinfo=pytz.UTC)
+    index_from, index_to = get_datetime_indices(filename, "DataBars", datetime_from, datetime_to)
+    bars = read_bars(filename, index_from, index_to)
+
 
 
