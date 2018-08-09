@@ -54,7 +54,7 @@ namespace QuotesDownloader
                     to = to.AddDays(-7);
                     var from = to.AddDays(-7);
                     string symbol = "EURUSD";
-                    string periodicity = "S1";
+                    string periodicity = "H1";
                     PriceType priceType = PriceType.Bid;
                     bool bars = false;
                     bool ticks = false;

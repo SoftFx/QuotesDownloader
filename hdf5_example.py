@@ -28,6 +28,47 @@ class QuoteEntry:
 
 
 def read_bars(filename, index_from=0, index_to=-1):
+    """ output: 2 arrays
+    bars - 2-dimensional array, where the first dimension is index number, the second contains the bars info:
+    0 - volume, 1 - open, 2 - close, 3- high, 4 - low;
+    bars data - 2-dimensional array, where the first dimension is index number, the second contains the bars data info:
+    0 - date (timestamp from Jan 1, 1970 in milliseconds), 1 - type (bid - 0 / ask - 1)
+    """
+
+    f = h5py.File(filename, 'r')
+    bars_dataset = f["Bars"]
+    data_bars_dataset = f["DataBars"]
+
+    if index_to == -1:
+        index_to = bars_dataset.shape[0]
+
+    bars = bars_dataset[index_from:index_to]
+    bars_data = data_bars_dataset[index_from:index_to]
+
+    return bars, bars_data
+
+
+def read_quotes(filename, index_from=0, index_to=-1):
+    """ output: 2 arrays
+    quotes - 3-dimensional array, where the first dimension is index number, the second one shows asks(0) & bids(1) quotes,
+    the third one contains the quotes info: 0 - volume, 1 - price (2 - volume, 3 - price for next quote, etc. for level 2)
+    quotes date - 1-dimensional array, which contains the quotes date info (timestamp from Jan 1, 1970 in milliseconds):
+    """
+
+    f = h5py.File(filename, 'r')
+    quotes_dataset = f["Quotes"]
+    date_quotes_dataset = f["DateQuotes"]
+
+    if index_to == -1:
+        index_to = quotes_dataset.shape[0]
+
+    quotes = quotes_dataset[index_from:index_to]
+    quotes_date = date_quotes_dataset[index_from:index_to]
+
+    return quotes, quotes_date
+
+
+def read_bars_classes(filename, index_from=0, index_to=-1):
     f = h5py.File(filename, 'r')
     bars_dataset = f["Bars"]
     data_bars_dataset = f["DataBars"]
@@ -51,7 +92,7 @@ def read_bars(filename, index_from=0, index_to=-1):
     return bars_list
 
 
-def read_quotes(filename, index_from=0, index_to=-1):
+def read_quotes_classes(filename, index_from=0, index_to=-1):
     f = h5py.File(filename, 'r')
     quotes_dataset = f["Quotes"]
     date_quotes_dataset = f["DateQuotes"]
@@ -108,14 +149,13 @@ if __name__ == "__main__":
     datetime_from = datetime.datetime(2018, 6, 8, 5, 0, 0, tzinfo=pytz.UTC)
     datetime_to = datetime.datetime(2018, 6, 8, 9, 0, 0, tzinfo=pytz.UTC)
     index_from, index_to = get_datetime_indices(filename, "DateQuotes", datetime_from, datetime_to)
-    quotes = read_quotes(filename, index_from, index_to)
+    quotes, quotes_date = read_quotes(filename, index_from, index_to)
 
     # Bars selective reading (by datetime)
     filename = 'EURUSD Bid S10  20180615  20180616.h5'
     datetime_from = datetime.datetime(2018, 6, 15, 5, 0, 0, tzinfo=pytz.UTC)
     datetime_to = datetime.datetime(2018, 6, 15, 9, 0, 0, tzinfo=pytz.UTC)
     index_from, index_to = get_datetime_indices(filename, "DataBars", datetime_from, datetime_to)
-    bars = read_bars(filename, index_from, index_to)
-
+    bars, bars_data = read_bars(filename, index_from, index_to)
 
 
