@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1535463982961.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "181F7C27",
+    "lastKnownWriteTime" : 3180141808686473843,
+    "last_content_update" : 1535463982961,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "CE34167F",
+        "caption" : "ticks",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=ticks&cache_key=CE34167F",
+        "displayedObservations" : 41412,
+        "environment" : "",
+        "object" : "ticks",
+        "preview" : 0,
+        "totalObservations" : 41412,
+        "variables" : 5
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
