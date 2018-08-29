@@ -47,9 +47,9 @@ namespace QuotesDownloader
                 {
                     bool help = false;
 
-                    string address = "tp.dev.soft-fx.eu";
-                    string login = "11";
-                    string password = "123qwe!";
+                    string address = "ttlive.fxopen.com";
+                    string login = "100";
+                    string password = "TTqfdeppmhDR";
                     int port = 5050;
 
                     var to = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
