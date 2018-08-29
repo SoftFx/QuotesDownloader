@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using TickTrader.FDK.Common;
 using TickTrader.FDK.Client;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace QuotesDownloader
 {
@@ -125,7 +127,7 @@ namespace QuotesDownloader
                         return;
                     }
 
-                    var client = new QuoteStore("QuotesDownloader", port: port);
+                    var client = new QuoteStore("QuotesDownloader", port: port, validateClientCertificate: (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => true);
 
                     client.Connect(address, -1);
                     client.Login(login, password, "", "", "", -1);
