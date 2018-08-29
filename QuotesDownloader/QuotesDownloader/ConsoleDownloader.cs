@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TickTrader.FDK.Common;
-using TickTrader.FDK.QuoteStore;
+using TickTrader.FDK.Client;
 
 namespace QuotesDownloader
 {
@@ -125,7 +125,7 @@ namespace QuotesDownloader
                         return;
                     }
 
-                    var client = new Client("QuotesDownloader", port: port);
+                    var client = new QuoteStore("QuotesDownloader", port: port);
 
                     client.Connect(address, -1);
                     client.Login(login, password, "", "", "", -1);

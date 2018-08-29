@@ -6,14 +6,14 @@
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
     using TickTrader.FDK.Common;
-    using TickTrader.FDK.QuoteStore;
+    using TickTrader.FDK.Client;
 
     public partial class QuotesDownloader : Form
     {
 
         #region Members
 
-        Client quoteClient;
+        QuoteStore quoteClient;
         Downloader downloader;
 
         #endregion
@@ -110,11 +110,11 @@
             try
             {
                 this.Log("Quote Feed Client initialization");
-                this.quoteClient = new Client("QuotesDownloader", port: Convert.ToInt32(this.m_port.Text));
-                this.quoteClient.LoginResultEvent += new Client.LoginResultDelegate(this.OnLogon);
-                this.quoteClient.LogoutEvent += new Client.LogoutDelegate(this.OnLogout);
-                this.quoteClient.DisconnectEvent += new Client.DisconnectDelegate(this.OnDisconnect);
-                this.quoteClient.SymbolListResultEvent += new Client.SymbolListResultDelegate(this.OnSymbolInfo);
+                this.quoteClient = new QuoteStore("QuotesDownloader", port: Convert.ToInt32(this.m_port.Text));
+                this.quoteClient.LoginResultEvent += new QuoteStore.LoginResultDelegate(this.OnLogon);
+                this.quoteClient.LogoutEvent += new QuoteStore.LogoutDelegate(this.OnLogout);
+                this.quoteClient.DisconnectEvent += new QuoteStore.DisconnectDelegate(this.OnDisconnect);
+                this.quoteClient.SymbolListResultEvent += new QuoteStore.SymbolListResultDelegate(this.OnSymbolInfo);
                 this.Log("Connecting...");
                 this.quoteClient.Connect(this.m_address.Text, -1);
                 this.quoteClient.Login(this.m_username.Text, this.m_password.Text, "", "", "", -1);
@@ -174,7 +174,7 @@
 
         #region Client Events
 
-        void OnLogon(Client quoteFeedClient, object sender)
+        void OnLogon(QuoteStore quoteFeedClient, object sender)
         {
             if (this.InvokeRequired)
             {
@@ -184,7 +184,7 @@
             this.Log("Quote Feed Client is connected");
         }
 
-        void OnDisconnect(Client quoteFeedClient, string text)
+        void OnDisconnect(QuoteStore quoteFeedClient, string text)
         {
             if (this.InvokeRequired)
             {
@@ -202,7 +202,7 @@
             }
         }
 
-        public void OnLogout(Client quoteFeedClient, LogoutInfo info)
+        public void OnLogout(QuoteStore quoteFeedClient, LogoutInfo info)
         {
             if (this.InvokeRequired)
             {
@@ -220,7 +220,7 @@
             }
         }
 
-        void OnSymbolInfo(Client quoteFeedClient, object sender, string[] symbols)
+        void OnSymbolInfo(QuoteStore quoteFeedClient, object sender, string[] symbols)
         {
 
             if (this.InvokeRequired)

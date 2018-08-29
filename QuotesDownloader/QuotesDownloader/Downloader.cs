@@ -4,7 +4,7 @@
     using System.IO;
     using System.Threading;
     using TickTrader.FDK.Common;
-    using TickTrader.FDK.QuoteStore;
+    using TickTrader.FDK.Client;
     using System.Text;
     using System.Globalization;
     using HDF5DotNet;
@@ -17,7 +17,7 @@
             this.thread = new Thread(ThreadMethod);
         }
 
-        public Downloader(Client quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, Boolean includeLevel2)
+        public Downloader(QuoteStore quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, Boolean includeLevel2)
             : this()
         {
             this.quoteClient = quoteClient;
@@ -29,7 +29,7 @@
             this.includeLevel2 = includeLevel2;
         }
 
-        public Downloader(Client quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, PriceType priceType, BarPeriod period)
+        public Downloader(QuoteStore quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, PriceType priceType, BarPeriod period)
             : this()
         {
             this.quoteClient = quoteClient;
@@ -309,7 +309,7 @@
 
         #region Members
 
-        readonly Client quoteClient;
+        readonly QuoteStore quoteClient;
         readonly string outputType;
         readonly string location;
         readonly string symbol;

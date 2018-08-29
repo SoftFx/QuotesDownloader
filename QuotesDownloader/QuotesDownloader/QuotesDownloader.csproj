@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +34,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\..\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -52,29 +52,29 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HDF5DotNet, Version=1.8.9.0, Culture=neutral, PublicKeyToken=a4952c8df86d6e8c, processorArchitecture=AMD64">
-      <HintPath>..\packages\HDF5DotNet.x64.1.8.9\lib\Net40\HDF5DotNet.dll</HintPath>
+    <Reference Include="HDF5DotNet">
+      <HintPath>..\..\Libs\HDF5DotNet.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\Libs\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.Options">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\NDesk.Options.dll</HintPath>
+      <HintPath>..\..\Libs\NDesk.Options.dll</HintPath>
     </Reference>
     <Reference Include="SoftFX.Net.Core">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\SoftFX.Net.Core.dll</HintPath>
+      <HintPath>..\..\Libs\SoftFX.Net.Core.dll</HintPath>
     </Reference>
     <Reference Include="SoftFX.Net.OrderEntry">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\SoftFX.Net.OrderEntry.dll</HintPath>
+      <HintPath>..\..\Libs\SoftFX.Net.OrderEntry.dll</HintPath>
     </Reference>
     <Reference Include="SoftFX.Net.QuoteFeed">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\SoftFX.Net.QuoteFeed.dll</HintPath>
+      <HintPath>..\..\Libs\SoftFX.Net.QuoteFeed.dll</HintPath>
     </Reference>
     <Reference Include="SoftFX.Net.QuoteStore">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\SoftFX.Net.QuoteStore.dll</HintPath>
+      <HintPath>..\..\Libs\SoftFX.Net.QuoteStore.dll</HintPath>
     </Reference>
     <Reference Include="SoftFX.Net.TradeCapture">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\SoftFX.Net.TradeCapture.dll</HintPath>
+      <HintPath>..\..\Libs\SoftFX.Net.TradeCapture.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -87,28 +87,19 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TickTrader.FDK.Calculator">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.Calculator.dll</HintPath>
+      <HintPath>..\..\Libs\TickTrader.FDK.Calculator.dll</HintPath>
+    </Reference>
+    <Reference Include="TickTrader.FDK.Client">
+      <HintPath>..\..\Libs\TickTrader.FDK.Client.dll</HintPath>
     </Reference>
     <Reference Include="TickTrader.FDK.Common">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.Common.dll</HintPath>
+      <HintPath>..\..\Libs\TickTrader.FDK.Common.dll</HintPath>
     </Reference>
     <Reference Include="TickTrader.FDK.Extended">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="TickTrader.FDK.OrderEntry">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.OrderEntry.dll</HintPath>
-    </Reference>
-    <Reference Include="TickTrader.FDK.QuoteFeed">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.QuoteFeed.dll</HintPath>
-    </Reference>
-    <Reference Include="TickTrader.FDK.QuoteStore">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.QuoteStore.dll</HintPath>
+      <HintPath>..\..\Libs\TickTrader.FDK.Extended.dll</HintPath>
     </Reference>
     <Reference Include="TickTrader.FDK.Standard">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.Standard.dll</HintPath>
-    </Reference>
-    <Reference Include="TickTrader.FDK.TradeCapture">
-      <HintPath>..\..\..\TickTrader FDK 2.23.1294\Bin\TickTrader.FDK.TradeCapture.dll</HintPath>
+      <HintPath>..\..\Libs\TickTrader.FDK.Standard.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
