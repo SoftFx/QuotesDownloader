@@ -322,12 +322,12 @@
             // 
             // m_address
             // 
-            this.m_address.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Addres", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.m_address.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Address", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.m_address.Location = new System.Drawing.Point(108, 20);
             this.m_address.Name = "m_address";
             this.m_address.Size = new System.Drawing.Size(282, 20);
             this.m_address.TabIndex = 5;
-            this.m_address.Text = global::QuotesDownloader.Settings.Default.Addres;
+            this.m_address.Text = global::QuotesDownloader.Settings.Default.Address;
             // 
             // m_passwordLabel
             // 

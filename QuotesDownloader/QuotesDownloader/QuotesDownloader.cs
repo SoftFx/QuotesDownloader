@@ -40,6 +40,9 @@
             this.m_dateAndTimeFrom.Value = from;
             this.m_dateAndTimeTo.Value = to;
             this.m_port.Text = "5050";
+            Settings.Default["Address"] = "ttlive.fxopen.com";
+            Settings.Default["Username"] = "100";
+            Settings.Default["Password"] = "TTqfdeppmhDR";
             this.ApplyDisconnectedState();
         }
 

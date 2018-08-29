@@ -26,12 +26,12 @@ namespace QuotesDownloader {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Addres {
+        public string Address {
             get {
-                return ((string)(this["Addres"]));
+                return ((string)(this["Address"]));
             }
             set {
-                this["Addres"] = value;
+                this["Address"] = value;
             }
         }
         
