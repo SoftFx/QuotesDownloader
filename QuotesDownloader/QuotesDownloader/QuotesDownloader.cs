@@ -7,6 +7,8 @@
     using System.Windows.Forms;
     using TickTrader.FDK.Common;
     using TickTrader.FDK.Client;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Net.Security;
 
     public partial class QuotesDownloader : Form
     {
@@ -113,7 +115,7 @@
             try
             {
                 this.Log("Quote Feed Client initialization");
-                this.quoteClient = new QuoteStore("QuotesDownloader", port: Convert.ToInt32(this.m_port.Text));
+                this.quoteClient = new QuoteStore("QuotesDownloader", port: Convert.ToInt32(this.m_port.Text), validateClientCertificate: (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) => true);
                 this.quoteClient.LoginResultEvent += new QuoteStore.LoginResultDelegate(this.OnLogon);
                 this.quoteClient.LogoutEvent += new QuoteStore.LogoutDelegate(this.OnLogout);
                 this.quoteClient.DisconnectEvent += new QuoteStore.DisconnectDelegate(this.OnDisconnect);
