@@ -106,27 +106,26 @@
         {
             QuoteDepth marketDepth = includeLevel2 ? QuoteDepth.Level2 : QuoteDepth.Top;
             DownloadQuotesEnumerator enumerator = quoteClient.DownloadQuotes(symbol, marketDepth, from, to, -1);
-            if (outputType == "text")
+            if (outputType == "csv")
             {
-                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.txt", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.csv", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
+                    file.WriteLine("date_time,bid_price,bid_volume,ask_price,ask_volume");
                     for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
                     {
                         StringBuilder builder = new StringBuilder();
-                        builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture));
-                        builder.Append(" bid ");
+                        builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff,", CultureInfo.InvariantCulture));
                         foreach (QuoteEntry entry in quote.Bids)
-                            builder.AppendFormat("{0} {1} ", entry.Price, entry.Volume);
-                        builder.Append(" ask ");
+                            builder.AppendFormat("{0},{1},", entry.Price, entry.Volume);
                         foreach (QuoteEntry entry in quote.Asks)
-                            builder.AppendFormat("{0} {1} ", entry.Price, entry.Volume);
+                            builder.AppendFormat("{0},{1}", entry.Price, entry.Volume);
                         file.WriteLine(builder);
                     }
                 }
                 this.Log("Quotes are downloaded successfully");
             }
-            else
+            else if (outputType == "csv")
             {
                 string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);

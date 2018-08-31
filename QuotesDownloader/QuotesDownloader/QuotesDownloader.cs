@@ -25,7 +25,7 @@
             this.InitializeComponent();
             this.Text = string.Format("{0} (FDK {1})", this.Text, Library.Version);
 
-            this.m_storageType.Items.Add("text");
+            this.m_storageType.Items.Add("csv");
             this.m_storageType.Items.Add("hdf5");
             this.m_storageType.SelectedIndex = 0;
 
