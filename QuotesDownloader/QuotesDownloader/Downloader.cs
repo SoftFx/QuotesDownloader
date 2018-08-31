@@ -125,7 +125,7 @@
                 }
                 this.Log("Quotes are downloaded successfully");
             }
-            else if (outputType == "csv")
+            else if (outputType == "hdf5")
             {
                 string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
