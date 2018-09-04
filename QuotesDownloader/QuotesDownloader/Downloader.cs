@@ -130,71 +130,69 @@
                 string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
-                var quotesData = new List<Quote>();
+                H5DataTypeId quotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_DOUBLE);
+                H5DataSpaceId quotesSpaceId = H5S.create_simple(3, new long[] { 1, 2, 2 }, new long[] { (long)H5S.H5SType.UNLIMITED, 2, 2 });
+                H5PropertyListId createChunkedQuotes = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
+                H5PropertyListId linkCreationDefaultsQuotes = H5P.create(H5P.PropertyListClass.LINK_CREATE);
+                H5PropertyListId accessCreationDefaultsQuotes = H5P.create(H5P.PropertyListClass.DATASET_ACCESS);
+                H5P.setChunk(createChunkedQuotes, new long[] { 1, 2, 2 });
+                H5DataSetId quotesSetId = H5D.create(fileId, "Quotes", quotesTypeId, quotesSpaceId, linkCreationDefaultsQuotes, createChunkedQuotes, accessCreationDefaultsQuotes);
+
+                H5DataTypeId dateQuotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_LLONG);
+                H5DataSpaceId dateQuotesSpaceId = H5S.create_simple(1, new long[] { 1 }, new long[] { (long)H5S.H5SType.UNLIMITED });
+                H5PropertyListId createChunkedDate = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
+                H5PropertyListId linkCreationDefaultsDate = H5P.create(H5P.PropertyListClass.LINK_CREATE);
+                H5PropertyListId accessCreationDefaultsDate = H5P.create(H5P.PropertyListClass.DATASET_ACCESS);
+                H5P.setChunk(createChunkedDate, new long[] { 1 });
+                H5DataSetId dateQuotesSetId = H5D.create(fileId, "DateQuotes", dateQuotesTypeId, dateQuotesSpaceId, linkCreationDefaultsDate, createChunkedDate, accessCreationDefaultsDate);
+
+                int count = 0;
                 for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
-                    quotesData.Add(quote);
-
-                if (quotesData.Count == 0)
-                    return;
-
-                double[,,] quotesArray = new double[quotesData.Count, 2, quotesData[0].Bids.Count * 2];
-                long[] dateQuotesArray = new long[quotesData.Count];
-                for (int i = 0; i < quotesData.Count; i++)
                 {
-                    long dateTimestamp = (long)(quotesData[i].CreatingTime.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
-                    dateQuotesArray[i] = dateTimestamp;
+                    count++;
+                    H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
+                    H5S.close(quotesSpaceId);
+                    quotesSpaceId = H5D.getSpace(quotesSetId);
+                    H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - 1, 0, 0},
+                        new long[] {1, 2, 2});
+                    double[,,] arr = new double[1, 2, 2];
                     int j = 0;
-                    foreach (QuoteEntry entry in quotesData[i].Bids)
+                    foreach (QuoteEntry entry in quote.Bids)
                     {
-                        quotesArray[i, 0, j] = entry.Price;
-                        quotesArray[i, 0, j+1] = entry.Volume;
+                        arr[0, 0, j] = entry.Price;
+                        arr[0, 0, j+1] = entry.Volume;
                         j += 2;
                     }
                     j = 0;
-                    foreach (QuoteEntry entry in quotesData[i].Asks)
+                    foreach (QuoteEntry entry in quote.Asks)
                     {
-                        quotesArray[i, 1, j] = entry.Price;
-                        quotesArray[i, 1, j + 1] = entry.Volume;
+                        arr[0, 1, j] = entry.Price;
+                        arr[0, 1, j+1] = entry.Volume;
                         j += 2;
                     }
+                    H5DataSpaceId memSpace = H5S.create_simple(3, new long[] {1, 2, 2});
+                    H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
+                        new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(arr));
+
+                    H5D.setExtent(dateQuotesSetId, new long[] {count});
+                    H5S.close(dateQuotesSpaceId);
+                    dateQuotesSpaceId = H5D.getSpace(dateQuotesSetId);
+                    H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - 1},
+                        new long[] {1});
+                    memSpace = H5S.create_simple(1, new long[] {1});
+                    H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
+                        new H5PropertyListId(H5P.Template.DEFAULT),
+                        new H5Array<long>(new[] {(long)quote.CreatingTime.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds}));
                 }
-                H5DataTypeId quotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_DOUBLE);
-                H5DataSpaceId quotesSpaceId = H5S.create_simple(3, new long[] { quotesData.Count, 2, quotesData[0].Asks.Count * 2 }, new long[] { (long)H5S.H5SType.UNLIMITED, 2, (long)H5S.H5SType.UNLIMITED });
-                H5PropertyListId createChunked = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
-                H5PropertyListId linkCreationDefaults = H5P.create(H5P.PropertyListClass.LINK_CREATE);
-                H5PropertyListId accessCreationDefaults = H5P.create(H5P.PropertyListClass.DATASET_ACCESS);
-                H5P.setChunk(createChunked, new long[] { 1, 2, 2 });
-                H5DataSetId quotesSetId = H5D.create(fileId, "Quotes", quotesTypeId, quotesSpaceId, linkCreationDefaults, createChunked, accessCreationDefaults);
 
-                H5D.setExtent(quotesSetId, new long[] { quotesData.Count, 2, quotesData[0].Asks.Count * 2 });
-                H5DataSpaceId newSpace = H5D.getSpace(quotesSetId);
-                H5S.selectHyperslab(newSpace, H5S.SelectOperator.SET, new long[] { 0, 0, 0 }, new long[] { quotesData.Count, 2, quotesData[0].Asks.Count * 2 });
-                H5D.write(quotesSetId, quotesTypeId, new H5Array<double>(quotesArray));
-
-                H5P.close(createChunked);
-                H5P.close(linkCreationDefaults);
-                H5P.close(accessCreationDefaults);
-                H5S.close(newSpace);
+                H5P.close(createChunkedQuotes);
+                H5P.close(linkCreationDefaultsQuotes);
+                H5P.close(accessCreationDefaultsQuotes);
+                H5P.close(createChunkedDate);
+                H5P.close(linkCreationDefaultsDate);
+                H5P.close(accessCreationDefaultsDate);
                 H5S.close(quotesSpaceId);
                 H5D.close(quotesSetId);
-
-                H5DataTypeId dateQuotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_LLONG);
-                H5DataSpaceId dateQuotesSpaceId = H5S.create_simple(1, new long[] { quotesData.Count }, new long[] { (long)H5S.H5SType.UNLIMITED });
-                createChunked = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
-                linkCreationDefaults = H5P.create(H5P.PropertyListClass.LINK_CREATE);
-                accessCreationDefaults = H5P.create(H5P.PropertyListClass.DATASET_ACCESS);
-                H5P.setChunk(createChunked, new long[] { 1 });
-                H5DataSetId dateQuotesSetId = H5D.create(fileId, "DateQuotes", dateQuotesTypeId, dateQuotesSpaceId, linkCreationDefaults, createChunked, accessCreationDefaults);
-
-                H5D.setExtent(dateQuotesSetId, new long[] { quotesData.Count });
-                newSpace = H5D.getSpace(dateQuotesSetId);
-                H5S.selectHyperslab(newSpace, H5S.SelectOperator.SET, new long[] { 0 }, new long[] { quotesData.Count });
-                H5D.write(dateQuotesSetId, dateQuotesTypeId, new H5Array<long>(dateQuotesArray));
-
-                H5P.close(createChunked);
-                H5P.close(linkCreationDefaults);
-                H5P.close(accessCreationDefaults);
-                H5S.close(newSpace);
                 H5S.close(dateQuotesSpaceId);
                 H5D.close(dateQuotesSetId);
 
