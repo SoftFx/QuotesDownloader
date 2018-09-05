@@ -147,44 +147,81 @@
                 H5DataSetId dateQuotesSetId = H5D.create(fileId, "DateQuotes", dateQuotesTypeId, dateQuotesSpaceId, linkCreationDefaultsDate, createChunkedDate, accessCreationDefaultsDate);
 
                 int count = 0;
+                int chunkCount = 0;
+                double[,,] quotesArr = new double[chunkSize, 2, 2];
+                long[] datesArr = new long[chunkSize];
+                H5DataSpaceId memSpace;
                 for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
                 {
-                    count++;
-                    H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
-                    H5S.close(quotesSpaceId);
-                    quotesSpaceId = H5D.getSpace(quotesSetId);
-                    H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - 1, 0, 0},
-                        new long[] {1, 2, 2});
-                    double[,,] arr = new double[1, 2, 2];
                     int j = 0;
                     foreach (QuoteEntry entry in quote.Bids)
                     {
-                        arr[0, 0, j] = entry.Price;
-                        arr[0, 0, j+1] = entry.Volume;
+                        quotesArr[chunkCount, 0, j] = entry.Price;
+                        quotesArr[chunkCount, 0, j + 1] = entry.Volume;
                         j += 2;
                     }
+
                     j = 0;
                     foreach (QuoteEntry entry in quote.Asks)
                     {
-                        arr[0, 1, j] = entry.Price;
-                        arr[0, 1, j+1] = entry.Volume;
+                        quotesArr[chunkCount, 1, j] = entry.Price;
+                        quotesArr[chunkCount, 1, j + 1] = entry.Volume;
                         j += 2;
                     }
-                    H5DataSpaceId memSpace = H5S.create_simple(3, new long[] {1, 2, 2});
+
+                    datesArr[chunkCount] =
+                        (long) quote.CreatingTime.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
+                    chunkCount++;
+                    count++;
+                    if (chunkCount == chunkSize)
+                    {
+                        H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
+                        H5S.close(quotesSpaceId);
+                        quotesSpaceId = H5D.getSpace(quotesSetId);
+                        H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - chunkSize, 0, 0},
+                            new long[] {chunkSize, 2, 2});
+
+                        memSpace = H5S.create_simple(3, new long[] {chunkSize, 2, 2});
+                        H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
+                            new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
+
+                        H5D.setExtent(dateQuotesSetId, new long[] {count});
+                        H5S.close(dateQuotesSpaceId);
+                        dateQuotesSpaceId = H5D.getSpace(dateQuotesSetId);
+                        H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - chunkSize},
+                            new long[] {chunkSize});
+                        memSpace = H5S.create_simple(1, new long[] {chunkSize});
+                        H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
+                            new H5PropertyListId(H5P.Template.DEFAULT),
+                            new H5Array<long>(datesArr));
+                        chunkCount = 0;
+                    }
+                }
+                
+                if (count % chunkSize != 0)
+                {
+                    int delta = count % chunkSize;
+                    H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
+                    H5S.close(quotesSpaceId);
+                    quotesSpaceId = H5D.getSpace(quotesSetId);
+                    H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - delta, 0, 0},
+                        new long[] {delta, 2, 2});
+
+                    memSpace = H5S.create_simple(3, new long[] {delta, 2, 2});
                     H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
-                        new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(arr));
+                        new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
 
                     H5D.setExtent(dateQuotesSetId, new long[] {count});
                     H5S.close(dateQuotesSpaceId);
                     dateQuotesSpaceId = H5D.getSpace(dateQuotesSetId);
-                    H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - 1},
-                        new long[] {1});
-                    memSpace = H5S.create_simple(1, new long[] {1});
+                    H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - delta},
+                        new long[] {delta});
+                    memSpace = H5S.create_simple(1, new long[] {delta});
                     H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
                         new H5PropertyListId(H5P.Template.DEFAULT),
-                        new H5Array<long>(new[] {(long)quote.CreatingTime.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds}));
+                        new H5Array<long>(datesArr));
                 }
-
+                
                 H5P.close(createChunkedQuotes);
                 H5P.close(linkCreationDefaultsQuotes);
                 H5P.close(accessCreationDefaultsQuotes);
@@ -204,17 +241,18 @@
         void DownloadBars()
         {
             DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
-            if (outputType == "text")
+            if (outputType == "csv")
             {
                 string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.txt", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
+                    file.WriteLine("date_time,open,close,low,high,volume");
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
-                        file.WriteLine(string.Format("{0} {1} {2} {3} {4} {5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
+                        file.WriteLine(string.Format("{0},{1},{2},{3},{4},{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
                 }
                 this.Log("Bars are downloaded successfully");
             }
-            else
+            else if (outputType == "hdf5")
             {
                 string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.h5", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
@@ -316,6 +354,7 @@
         readonly PriceType priceType;
         readonly BarPeriod period;
         Thread thread;
+        const int chunkSize = 32 * 4;  //32 - chunk size for 1 kB
 
         #endregion
     }
