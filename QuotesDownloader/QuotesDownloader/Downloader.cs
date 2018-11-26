@@ -243,7 +243,7 @@
             DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
             if (outputType == "csv")
             {
-                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.txt", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.csv", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
                     file.WriteLine("date_time,open,close,low,high,volume");
