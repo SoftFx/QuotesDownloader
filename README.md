@@ -26,6 +26,6 @@
 **location** – {MyDocuments_folder}\Quotes<br />
 #### **Examples:**<br />
 To download bids bars for EURAUD for every hour from June 4th to June 5th in text format & silent mode:<br />
-```-a=localhost -p=5050 -u=11 -w=123qwe! -s=EURAUD -r=Bids -d=H1 -f=2018-06-04 -t=2018-06-05```<br /><br />
+```-a=ttlive.soft-fx.com -p=5050 -u=111 -w=123456 -s=EURAUD -r=Bids -d=H1 -f=2018-06-04 -t=2018-06-05```<br /><br />
 To download quotes for EURUSD from June 7th to June 8th in hdf5 format & verbose mode:<br />
-```-a=localhost -p=5050 -u=11 -w=123qwe! -s=EURUSD -r=ticks -f=2018-06-07 -t=2018-06-08 -o=hdf5 -v=true```<br />
+```-a=ttlive.soft-fx.com -p=5050 -u=111 -w=123456 -s=EURUSD -r=ticks -f=2018-06-07 -t=2018-06-08 -o=hdf5 -v=true```<br />
