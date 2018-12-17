@@ -111,15 +111,15 @@
                 string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.csv", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
-                    file.WriteLine("date_time,bid_price,bid_volume,ask_price,ask_volume");
+                    file.WriteLine("date_time;bid_price;bid_volume;ask_price;ask_volume");
                     for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
                     {
                         StringBuilder builder = new StringBuilder();
-                        builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff,", CultureInfo.InvariantCulture));
+                        builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff;", CultureInfo.InvariantCulture));
                         foreach (QuoteEntry entry in quote.Bids)
-                            builder.AppendFormat("{0},{1},", entry.Price, entry.Volume);
+                            builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
                         foreach (QuoteEntry entry in quote.Asks)
-                            builder.AppendFormat("{0},{1}", entry.Price, entry.Volume);
+                            builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
                         file.WriteLine(builder);
                     }
                 }
@@ -246,9 +246,9 @@
                 string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.csv", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
-                    file.WriteLine("date_time,open,close,low,high,volume");
+                    file.WriteLine("date_time;open;close;low;high;volume");
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
-                        file.WriteLine(string.Format("{0},{1},{2},{3},{4},{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
+                        file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
                 }
                 this.Log("Bars are downloaded successfully");
             }

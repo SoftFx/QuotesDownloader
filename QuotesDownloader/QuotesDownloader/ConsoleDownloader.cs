@@ -62,7 +62,7 @@ namespace QuotesDownloader
                     bool ticks = false;
                     bool level2 = false;
                     bool verbose = false;
-                    string outputType = "text";
+                    string outputType = "csv";
 
                     var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     path = Path.Combine(path, "Quotes");
