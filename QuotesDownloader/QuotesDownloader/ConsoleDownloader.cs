@@ -161,7 +161,7 @@ namespace QuotesDownloader
                     Console.WriteLine("Error : " + ex.Message);
                 }
             }
-            Console.ReadKey();
+            Console.Read();
             FreeConsole();
         }
     }
