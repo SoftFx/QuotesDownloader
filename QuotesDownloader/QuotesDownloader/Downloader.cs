@@ -120,6 +120,7 @@
                             builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
                         foreach (QuoteEntry entry in quote.Asks)
                             builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
+                        builder.Remove(builder.Length - 1, 1);
                         file.WriteLine(builder);
                     }
                 }
