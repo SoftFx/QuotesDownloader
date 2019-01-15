@@ -50,7 +50,7 @@ namespace QuotesDownloader
                     string address = "ttlive.fxopen.com";
                     string login = "100";
                     string password = "TTqfdeppmhDR";
-                    int port = 5050;
+                    int port = 5042;
 
                     var to = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
                     to = to.AddDays(-7);

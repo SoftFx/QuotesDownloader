@@ -9,7 +9,7 @@
       <Value Profile="(Default)">TTqfdeppmhDR</Value>
     </Setting>
     <Setting Name="Port" Type="System.String" Scope="User">
-      <Value Profile="(Default)">5050</Value>
+      <Value Profile="(Default)">5042</Value>
     </Setting>
     <Setting Name="Address" Type="System.String" Scope="User">
       <Value Profile="(Default)">ttlive.fxopen.com</Value>
