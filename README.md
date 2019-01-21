@@ -11,7 +11,7 @@
 **f|datefrom** – date from<br />
 **s|symbol** – symbol of quotes/bars<br />
 **d|periodicity** – periodicity (H1, M15, etc.; for bars only)<br />
-**o|output** – output type (text or hdf5)<br />
+**o|output** – output type (cvs or hdf5)<br />
 **l|location** – folder for saving quotes<br />
 **v|verbose** – display log information while running<br />
 **r|request** – bids or asks for bars; ticks or level2 for quotes<br />
