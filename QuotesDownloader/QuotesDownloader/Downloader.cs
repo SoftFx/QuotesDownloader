@@ -130,7 +130,7 @@
             {
                 string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
-               
+
                 H5DataTypeId quotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_DOUBLE);
                 H5DataSpaceId quotesSpaceId = H5S.create_simple(3, new long[] { 1, 2, 2 }, new long[] { (long)H5S.H5SType.UNLIMITED, 2, 2 });
                 H5PropertyListId createChunkedQuotes = H5P.create(H5P.PropertyListClass.DATASET_CREATE);
@@ -171,58 +171,58 @@
                     }
 
                     datesArr[chunkCount] =
-                        (long) quote.CreatingTime.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
+                        (long)quote.CreatingTime.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
                     chunkCount++;
                     count++;
                     if (chunkCount == chunkSize)
                     {
-                        H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
+                        H5D.setExtent(quotesSetId, new long[] { count, 2, 2 });
                         H5S.close(quotesSpaceId);
                         quotesSpaceId = H5D.getSpace(quotesSetId);
-                        H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - chunkSize, 0, 0},
-                            new long[] {chunkSize, 2, 2});
+                        H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] { count - chunkSize, 0, 0 },
+                            new long[] { chunkSize, 2, 2 });
 
-                        memSpace = H5S.create_simple(3, new long[] {chunkSize, 2, 2});
+                        memSpace = H5S.create_simple(3, new long[] { chunkSize, 2, 2 });
                         H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
                             new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
 
-                        H5D.setExtent(dateQuotesSetId, new long[] {count});
+                        H5D.setExtent(dateQuotesSetId, new long[] { count });
                         H5S.close(dateQuotesSpaceId);
                         dateQuotesSpaceId = H5D.getSpace(dateQuotesSetId);
-                        H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - chunkSize},
-                            new long[] {chunkSize});
-                        memSpace = H5S.create_simple(1, new long[] {chunkSize});
+                        H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] { count - chunkSize },
+                            new long[] { chunkSize });
+                        memSpace = H5S.create_simple(1, new long[] { chunkSize });
                         H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
                             new H5PropertyListId(H5P.Template.DEFAULT),
                             new H5Array<long>(datesArr));
                         chunkCount = 0;
                     }
                 }
-                
+
                 if (count % chunkSize != 0)
                 {
                     int delta = count % chunkSize;
-                    H5D.setExtent(quotesSetId, new long[] {count, 2, 2});
+                    H5D.setExtent(quotesSetId, new long[] { count, 2, 2 });
                     H5S.close(quotesSpaceId);
                     quotesSpaceId = H5D.getSpace(quotesSetId);
-                    H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] {count - delta, 0, 0},
-                        new long[] {delta, 2, 2});
+                    H5S.selectHyperslab(quotesSpaceId, H5S.SelectOperator.SET, new long[] { count - delta, 0, 0 },
+                        new long[] { delta, 2, 2 });
 
-                    memSpace = H5S.create_simple(3, new long[] {delta, 2, 2});
+                    memSpace = H5S.create_simple(3, new long[] { delta, 2, 2 });
                     H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
                         new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
 
-                    H5D.setExtent(dateQuotesSetId, new long[] {count});
+                    H5D.setExtent(dateQuotesSetId, new long[] { count });
                     H5S.close(dateQuotesSpaceId);
                     dateQuotesSpaceId = H5D.getSpace(dateQuotesSetId);
-                    H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] {count - delta},
-                        new long[] {delta});
-                    memSpace = H5S.create_simple(1, new long[] {delta});
+                    H5S.selectHyperslab(dateQuotesSpaceId, H5S.SelectOperator.SET, new long[] { count - delta },
+                        new long[] { delta });
+                    memSpace = H5S.create_simple(1, new long[] { delta });
                     H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
                         new H5PropertyListId(H5P.Template.DEFAULT),
                         new H5Array<long>(datesArr));
                 }
-                
+
                 H5P.close(createChunkedQuotes);
                 H5P.close(linkCreationDefaultsQuotes);
                 H5P.close(accessCreationDefaultsQuotes);
@@ -236,6 +236,11 @@
 
                 H5F.close(fileId);
                 this.Log("Quotes are downloaded successfully");
+            }
+            else
+            {
+                Console.WriteLine("Unsupported output type - " + outputType);
+                throw new Exception("Unsupported output type - " + outputType);
             }
         }
 
@@ -290,6 +295,11 @@
 
                 H5F.close(fileId);
                 this.Log("Bars are downloaded successfully");
+            }
+            else
+            {
+                Console.WriteLine("Unsupported output type - " + outputType);
+                throw new Exception("Unsupported output type - " + outputType);
             }
         }
 
