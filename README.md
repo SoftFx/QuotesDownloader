@@ -11,7 +11,7 @@
 **f|datefrom** – date from<br />
 **s|symbol** – symbol of quotes/bars<br />
 **d|periodicity** – periodicity (H1, M15, etc.; for bars only)<br />
-**o|output** – output type (cvs or hdf5)<br />
+**o|output** – output type (csv or hdf5)<br />
 **l|location** – folder for saving quotes<br />
 **v|verbose** – display log information while running<br />
 **r|request** – bids or asks for bars; ticks or level2 for quotes<br />
@@ -22,7 +22,7 @@
 **periodicity** – H1 <br />
 **request** – ticks (bids for bars) <br />
 **verbose** – false (silent mode)<br />
-**outputType** – text<br />
+**outputType** – csv<br />
 **location** – {MyDocuments_folder}\Quotes<br />
 #### **Examples:**<br />
 To download bids bars for EURAUD for every hour from June 4th to June 5th in text format & silent mode:<br />
