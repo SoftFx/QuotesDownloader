@@ -61,6 +61,7 @@ namespace QuotesDownloader
                     bool bars = false;
                     bool ticks = false;
                     bool level2 = false;
+                    bool vwap = false;
                     bool verbose = false;
                     string outputType = "csv";
 
@@ -101,6 +102,9 @@ namespace QuotesDownloader
                                         case "level2":
                                             level2 = true;
                                             break;
+                                        case "vwap":
+                                            vwap = true;
+                                            break;
                                         default:
                                             throw new Exception("Unknown request type: " + v);
                                     }
@@ -139,10 +143,8 @@ namespace QuotesDownloader
                     Downloader downloader;
                     if (bars)
                         downloader = new Downloader(client, outputType, location, symbol, from, to, priceType, new BarPeriod(periodicity));
-                    else if (level2)
-                        downloader = new Downloader(client, outputType, location, symbol, from, to, true);
                     else
-                        downloader = new Downloader(client, outputType, location, symbol, from, to, false);
+                        downloader = new Downloader(client, outputType, location, symbol, from, to, level2, vwap);
 
                     downloader.Start();
                     while (!downloader.IsFinished)

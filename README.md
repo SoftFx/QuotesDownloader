@@ -11,10 +11,10 @@
 **f|datefrom** – date from<br />
 **s|symbol** – symbol of quotes/bars<br />
 **d|periodicity** – periodicity (H1, M15, etc.; for bars only)<br />
-**o|output** – output type (csv or hdf5)<br />
+**o|output** – output type (csv, hdf5, csv_zip)<br />
 **l|location** – folder for saving quotes<br />
 **v|verbose** – display log information while running<br />
-**r|request** – bids or asks for bars; ticks or level2 for quotes<br />
+**r|request** – bids or asks for bars; ticks, level2, VWAP for quotes<br />
 #### **Default values:**<br />
 **dateto** – the current day – 7days<br />
 **datefrom**  – the current day – 14days<br />

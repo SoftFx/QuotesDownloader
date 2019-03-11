@@ -27,6 +27,7 @@
 
             this.m_storageType.Items.Add("csv");
             this.m_storageType.Items.Add("hdf5");
+            this.m_storageType.Items.Add("csv_zip");
             this.m_storageType.SelectedIndex = 0;
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -259,11 +260,15 @@
 
                 if (this.m_quotesType.SelectedIndex == 0)
                 {
-                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, false);
+                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to);
                 }
                 else if (this.m_quotesType.SelectedIndex == 1)
                 {
                     this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, true);
+                }
+                else if (this.m_quotesType.SelectedIndex == 2)
+                {
+                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, false, true);
                 }
                 else
                 {
@@ -415,5 +420,15 @@
         }
 
         #endregion
+
+        private void m_symbols_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void QuotesDownloader_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
