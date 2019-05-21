@@ -415,7 +415,7 @@ namespace QuotesDownloader
                 }
 
                 FileInfo fi = new FileInfo(filename);
-                ZipEntry newEntry = new ZipEntry($"ticks vwap e{deg}.csv");
+                ZipEntry newEntry = new ZipEntry($"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv");
                 newEntry.Size = fi.Length;
                 zipStream.PutNextEntry(newEntry);
                 byte[] buffer = new byte[4096];
