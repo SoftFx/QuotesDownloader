@@ -425,7 +425,7 @@ namespace QuotesDownloader
                 }
 
                 zipStream.CloseEntry();
-                File.Delete($"ticks vwap e{deg}.csv");
+                File.Delete($"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv");
             }
         }
 
