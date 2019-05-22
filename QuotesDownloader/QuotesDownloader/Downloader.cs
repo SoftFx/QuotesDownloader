@@ -535,7 +535,7 @@ namespace QuotesDownloader
                         for (Bar bar = AskEnumerator.Next(-1); bar != null; bar = AskEnumerator.Next(-1))
                         {
                             StringBuilder builder = new StringBuilder();
-                            builder.Append(bar.From.ToString("yyyy.MM.dd HH:mm:ss.fff", CultureInfo.InvariantCulture));
+                            builder.Append(bar.From.ToString("yyyy.MM.dd HH:mm:ss", CultureInfo.InvariantCulture));
                             if (bar.From == lastQuoteTime)
                                 repeatingQuotes++;
                             else
