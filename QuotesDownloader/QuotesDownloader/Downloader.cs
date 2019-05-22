@@ -439,7 +439,7 @@ namespace QuotesDownloader
                 {
                     file.WriteLine("date_time;open;close;low;high;volume");
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
-                        file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
+                        file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
                 }
                 this.Log("Bars are downloaded successfully");
             }
