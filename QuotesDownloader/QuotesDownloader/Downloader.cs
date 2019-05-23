@@ -380,7 +380,7 @@ namespace QuotesDownloader
                 }
 
                 char sign = deg >= 0 ? '+' : '-';
-                string filename = $"ticks vwap e{sign}{Math.Abs(deg)}.csv";
+                string filename = $"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv";
                 using (StreamWriter file = File.CreateText(filename))
                 {
                     DateTime lastQuoteTime = DateTime.MinValue;
@@ -415,7 +415,7 @@ namespace QuotesDownloader
                 }
 
                 FileInfo fi = new FileInfo(filename);
-                ZipEntry newEntry = new ZipEntry($"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv");
+                ZipEntry newEntry = new ZipEntry(filename);
                 newEntry.Size = fi.Length;
                 zipStream.PutNextEntry(newEntry);
                 byte[] buffer = new byte[4096];
@@ -425,7 +425,7 @@ namespace QuotesDownloader
                 }
 
                 zipStream.CloseEntry();
-                File.Delete($"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv");
+                File.Delete(filename);
             }
         }
 
