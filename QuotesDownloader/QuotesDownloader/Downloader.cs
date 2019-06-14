@@ -115,7 +115,7 @@ namespace QuotesDownloader
             {
                 if (includeVWAP)
                     throw new ArgumentException("VWAP is not supported for hdf5 and csv format.");
-                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.csv", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.csv", symbol.Replace("/", "%2F"), includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
                     file.WriteLine("date_time;bid_price;bid_volume;ask_price;ask_volume");
@@ -137,7 +137,7 @@ namespace QuotesDownloader
             {
                 if (includeVWAP)
                     throw new ArgumentException("VWAP is not supported for hdf5 and csv format.");
-                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol, includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0}{1}{2}{3}.h5", symbol.Replace("/", "%2F"), includeLevel2 ? " level2" : "", from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
                 H5DataTypeId quotesTypeId = new H5DataTypeId(H5T.H5Type.NATIVE_DOUBLE);
@@ -253,7 +253,7 @@ namespace QuotesDownloader
                     quoteType = "VWAP";
                 if (includeLevel2)
                     quoteType = "TicksLevel2";
-                string path = Path.Combine(location, $"{symbol.Replace("/","")}_{quoteType}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
+                string path = Path.Combine(location, $"{symbol.Replace("/", "%2F")}_{quoteType}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
                 using (ZipOutputStream zs = new ZipOutputStream(File.Create(path)))
                 {
                     if (includeVWAP)
@@ -434,7 +434,7 @@ namespace QuotesDownloader
             if (outputType == "csv")
             {
                 DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
-                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.csv", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.csv", symbol.Replace("/", "%2F"), priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
                     file.WriteLine("date_time;open;close;low;high;volume");
@@ -446,7 +446,7 @@ namespace QuotesDownloader
             else if (outputType == "hdf5")
             {
                 DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
-                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.h5", symbol, priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
+                string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.h5", symbol.Replace("/", "%2F"), priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
                 var barsData = new List<Bar>();
@@ -486,7 +486,7 @@ namespace QuotesDownloader
             {
                 DownloadBarsEnumerator BidEnumerator = quoteClient.DownloadBars(symbol, PriceType.Bid, period, from, to, -1);
                 DownloadBarsEnumerator AskEnumerator = quoteClient.DownloadBars(symbol, PriceType.Ask, period, from, to, -1);
-                string path = Path.Combine(location, $"{symbol.Replace("/", "")}_{period}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
+                string path = Path.Combine(location, $"{symbol.Replace("/", "%2F")}_{period}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
                 using (ZipOutputStream zs = new ZipOutputStream(File.Create(path)))
                 {
                     string filename = $"{period} bid.csv";
