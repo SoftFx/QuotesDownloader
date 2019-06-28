@@ -75,6 +75,11 @@ namespace QuotesDownloader
             }
         }
 
+        public void CancelDownload()
+        {
+            this.thread.Abort();
+        }
+
         #endregion
 
         #region Events
@@ -98,6 +103,10 @@ namespace QuotesDownloader
                     DownloadQuotes();
                 else
                     DownloadBars();
+            }
+            catch (ThreadAbortException ex)
+            {
+                this.Log("Download aborted");
             }
             catch (Exception ex)
             {

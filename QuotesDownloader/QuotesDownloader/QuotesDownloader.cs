@@ -9,6 +9,7 @@
     using TickTrader.FDK.Client;
     using System.Security.Cryptography.X509Certificates;
     using System.Net.Security;
+    using TimeoutException = TickTrader.FDK.Common.TimeoutException;
 
     public partial class QuotesDownloader : Form
     {
@@ -118,8 +119,14 @@
                 this.quoteClient.DisconnectEvent += new QuoteStore.DisconnectDelegate(this.OnDisconnect);
                 this.quoteClient.SymbolListResultEvent += new QuoteStore.SymbolListResultDelegate(this.OnSymbolInfo);
                 this.Log("Connecting...");
-                this.quoteClient.Connect(this.m_address.Text, -1);
-                this.quoteClient.Login(this.m_username.Text, this.m_password.Text, "", "", "", -1);
+                this.quoteClient.Connect(this.m_address.Text, 5000);
+                this.quoteClient.Login(this.m_username.Text, this.m_password.Text, "", "", "", 5000);
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show("Connection timeout", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Disconnect();
+                return;
             }
             catch (Exception ex)
             {
@@ -300,6 +307,7 @@
             }
             else
             {
+                this.downloader.CancelDownload();
                 this.downloader = null;
                 this.m_download.Text = "Download";
                 this.m_browse.Enabled = true;
