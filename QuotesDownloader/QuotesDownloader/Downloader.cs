@@ -78,6 +78,8 @@ namespace QuotesDownloader
         public void CancelDownload()
         {
             this.thread.Abort();
+            if (!string.IsNullOrEmpty(currentTempFile))
+                File.Delete(currentTempFile);
         }
 
         #endregion
@@ -281,6 +283,7 @@ namespace QuotesDownloader
             string filename = "ticks.csv";
             using (StreamWriter file = File.CreateText(filename))
             {
+                currentTempFile = filename;
                 DateTime lastQuoteTime = DateTime.MinValue;
                 int repeatingQuotes = 0;
                 for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
@@ -321,12 +324,14 @@ namespace QuotesDownloader
             }
             zipStream.CloseEntry();
             File.Delete("ticks.csv");
+            currentTempFile = null;
         }
         void DownloadLevel2CSVNew(DownloadQuotesEnumerator enumerator, ZipOutputStream zipStream)
         {
             string filename = "ticks level2.csv";
             using (StreamWriter file = File.CreateText(filename))
             {
+                currentTempFile = filename;
                 DateTime lastQuoteTime = DateTime.MinValue;
                 int repeatingQuotes = 0;
                 for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
@@ -373,6 +378,7 @@ namespace QuotesDownloader
             zipStream.CloseEntry();
 
             File.Delete("ticks level2.csv");
+            currentTempFile = null;
         }
         void DownloadVWAPCSVNew(ZipOutputStream zipStream)
         {
@@ -392,6 +398,7 @@ namespace QuotesDownloader
                 string filename = $"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv";
                 using (StreamWriter file = File.CreateText(filename))
                 {
+                    currentTempFile = filename;
                     DateTime lastQuoteTime = DateTime.MinValue;
                     int repeatingQuotes = 0;
                     for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
@@ -435,6 +442,7 @@ namespace QuotesDownloader
 
                 zipStream.CloseEntry();
                 File.Delete(filename);
+                currentTempFile = null;
             }
         }
 
@@ -501,6 +509,7 @@ namespace QuotesDownloader
                     string filename = $"{period} bid.csv";
                     using (StreamWriter file = File.CreateText(filename))
                     {
+                        currentTempFile = filename;
                         DateTime lastQuoteTime = DateTime.MinValue;
                         int repeatingQuotes = 0;
                         for (Bar bar = BidEnumerator.Next(-1); bar != null; bar = BidEnumerator.Next(-1))
@@ -535,10 +544,12 @@ namespace QuotesDownloader
                     zs.CloseEntry();
 
                     File.Delete(filename);
+                    currentTempFile = null;
 
                     filename = $"{period} ask.csv";
                     using (StreamWriter file = File.CreateText(filename))
                     {
+                        currentTempFile = filename;
                         DateTime lastQuoteTime = DateTime.MinValue;
                         int repeatingQuotes = 0;
                         for (Bar bar = AskEnumerator.Next(-1); bar != null; bar = AskEnumerator.Next(-1))
@@ -573,6 +584,7 @@ namespace QuotesDownloader
                     zs.CloseEntry();
 
                     File.Delete(filename);
+                    currentTempFile = null;
                 }
                 this.Log("Bars are downloaded successfully");
             }
@@ -642,6 +654,8 @@ namespace QuotesDownloader
         readonly BarPeriod period;
         Thread thread;
         const int chunkSize = 32 * 4;  //32 - chunk size for 1 kB
+
+        string currentTempFile;
 
         #endregion
     }
