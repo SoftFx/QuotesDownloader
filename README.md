@@ -33,7 +33,7 @@ To download quotes for EURUSD from June 7th to June 8th in hdf5 format & verbose
 All dates and times are in format **"yyyy.MM.dd HH:dd:ss.fff[-ind if ind>0]"** example:<br /> 
 "2019.02.08 10:06:37.902"<br />
 "2019.02.08 10:06:53.889-2"<br />
-**Csv row formmatting** <br />
+**Csv row formatting** <br />
 ticks and vwap ticks: <br />
 "date,bidPrice,bidVolume,askPrice,askVolume"<br />
 if side is not presented corresponding values are not written.<br />
