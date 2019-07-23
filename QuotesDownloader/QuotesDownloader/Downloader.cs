@@ -301,11 +301,21 @@ namespace QuotesDownloader
                         builder.Append(-repeatingQuotes);
                     builder.Append(",");
                     if (quote.Bids.Count != 0)
-                        builder.Append($"{quote.Bids[0].Price},{quote.Bids[0].Volume},");
+                    {
+                        if (quote.IndicativeTick)
+                            builder.Append($"{quote.Bids[0].Price},{-quote.Bids[0].Volume},");
+                        else
+                            builder.Append($"{quote.Bids[0].Price},{quote.Bids[0].Volume},");
+                    }
                     else
                         builder.Append(",,");
                     if (quote.Asks.Count != 0)
-                        builder.Append($"{quote.Asks[0].Price},{quote.Asks[0].Volume},");
+                    {
+                        if (quote.IndicativeTick)
+                            builder.Append($"{quote.Asks[0].Price},{-quote.Asks[0].Volume},");
+                        else
+                            builder.Append($"{quote.Asks[0].Price},{quote.Asks[0].Volume},");
+                    }
                     else
                         builder.Append(",,");
                     builder.Remove(builder.Length - 1, 1);
@@ -352,11 +362,21 @@ namespace QuotesDownloader
                     while (i < quote.Bids.Count || i < quote.Asks.Count)
                     {
                         if (i < quote.Bids.Count)
-                            builder.Append($"{quote.Bids[i].Price},{quote.Bids[i].Volume},");
+                        {
+                            if (quote.IndicativeTick)
+                                builder.Append($"{quote.Bids[i].Price},{-quote.Bids[i].Volume},");
+                            else
+                                builder.Append($"{quote.Bids[i].Price},{quote.Bids[i].Volume},");
+                        }
                         else
                             builder.Append(",,");
                         if (i < quote.Asks.Count)
-                            builder.Append($"{quote.Asks[i].Price},{quote.Asks[i].Volume},");
+                        {
+                            if (quote.IndicativeTick)
+                                builder.Append($"{quote.Asks[i].Price},{-quote.Asks[i].Volume},");
+                            else
+                                builder.Append($"{quote.Asks[i].Price},{quote.Asks[i].Volume},");
+                        }
                         else
                             builder.Append(",,");
                         i++;
