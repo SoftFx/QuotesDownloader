@@ -77,9 +77,12 @@ namespace QuotesDownloader
 
         public void CancelDownload()
         {
-            this.thread.Abort();
-            if (!string.IsNullOrEmpty(currentTempFile))
-                File.Delete(currentTempFile);
+            if (thread != null)
+            {
+                this.thread.Abort();
+                if (!string.IsNullOrEmpty(currentTempFile))
+                    File.Delete(currentTempFile);
+            }
         }
 
         #endregion
@@ -265,6 +268,7 @@ namespace QuotesDownloader
                 if (includeLevel2)
                     quoteType = "TicksLevel2";
                 string path = Path.Combine(location, $"{symbol.Replace("/", "%2F")}_{quoteType}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
+                Console.WriteLine(path);
                 using (ZipOutputStream zs = new ZipOutputStream(File.Create(path)))
                 {
                     if (includeVWAP)

@@ -30,6 +30,20 @@ namespace QuotesDownloader
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetStdHandle(int nStdHandle, IntPtr handle);
 
+        private delegate void SignalHandler(ConsoleSignal consoleSignal);
+
+        private enum ConsoleSignal
+        {
+            CtrlC = 0,
+            CtrlBreak = 1,
+            Close = 2,
+            LogOff = 5,
+            Shutdown = 6
+        }
+
+        [DllImport("Kernel32", EntryPoint = "SetConsoleCtrlHandler")]
+        private static extern bool SetSignalHandler(SignalHandler handler, bool add);
+
         public static void ConsoleMain(string[] args)
         {
             if (AllocConsole())
@@ -145,7 +159,11 @@ namespace QuotesDownloader
                         downloader = new Downloader(client, outputType, location, symbol, from, to, priceType, new BarPeriod(periodicity));
                     else
                         downloader = new Downloader(client, outputType, location, symbol, from, to, level2, vwap);
-
+                    SetSignalHandler(signal =>
+                    {
+                        if (downloader != null)
+                            downloader.CancelDownload();
+                    }, true);
                     downloader.Start();
                     while (!downloader.IsFinished)
                         Thread.Sleep(50);
