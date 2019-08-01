@@ -138,12 +138,12 @@ namespace QuotesDownloader
                         StringBuilder builder = new StringBuilder();
                         builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff;", CultureInfo.InvariantCulture));
                         foreach (QuoteEntry entry in quote.Bids)
-                            if (quote.TickType.HasFlag(TickTypes.IndicativeBid))
+                            if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                                 builder.AppendFormat("{0};{1};", entry.Price, -entry.Volume);
                             else
                                 builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
                         foreach (QuoteEntry entry in quote.Asks)
-                            if (quote.TickType.HasFlag(TickTypes.IndicativeAsk))
+                            if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                                 builder.AppendFormat("{0};{1};", entry.Price, -entry.Volume);
                             else
                                 builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
@@ -312,7 +312,7 @@ namespace QuotesDownloader
                     builder.Append(",");
                     if (quote.Bids.Count != 0)
                     {
-                        if (quote.TickType.HasFlag(TickTypes.IndicativeBid))
+                        if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                             builder.Append($"{quote.Bids[0].Price},{-quote.Bids[0].Volume},");
                         else
                             builder.Append($"{quote.Bids[0].Price},{quote.Bids[0].Volume},");
@@ -321,7 +321,7 @@ namespace QuotesDownloader
                         builder.Append(",,");
                     if (quote.Asks.Count != 0)
                     {
-                        if (quote.TickType.HasFlag(TickTypes.IndicativeAsk))
+                        if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                             builder.Append($"{quote.Asks[0].Price},{-quote.Asks[0].Volume},");
                         else
                             builder.Append($"{quote.Asks[0].Price},{quote.Asks[0].Volume},");
@@ -373,7 +373,7 @@ namespace QuotesDownloader
                     {
                         if (i < quote.Bids.Count)
                         {
-                            if (quote.TickType.HasFlag(TickTypes.IndicativeBid))
+                            if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                                 builder.Append($"{quote.Bids[i].Price},{-quote.Bids[i].Volume},");
                             else
                                 builder.Append($"{quote.Bids[i].Price},{quote.Bids[i].Volume},");
@@ -382,7 +382,7 @@ namespace QuotesDownloader
                             builder.Append(",,");
                         if (i < quote.Asks.Count)
                         {
-                            if (quote.TickType.HasFlag(TickTypes.IndicativeAsk))
+                            if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
                                 builder.Append($"{quote.Asks[i].Price},{-quote.Asks[i].Volume},");
                             else
                                 builder.Append($"{quote.Asks[i].Price},{quote.Asks[i].Volume},");
