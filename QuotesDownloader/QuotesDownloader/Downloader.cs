@@ -77,12 +77,9 @@ namespace QuotesDownloader
 
         public void CancelDownload()
         {
-            if (thread != null)
-            {
-                this.thread.Abort();
-                if (!string.IsNullOrEmpty(currentTempFile))
-                    File.Delete(currentTempFile);
-            }
+            this.thread?.Abort();
+            if (!string.IsNullOrEmpty(currentTempFile))
+                File.Delete(currentTempFile);
         }
 
         #endregion

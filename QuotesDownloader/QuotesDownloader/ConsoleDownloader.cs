@@ -161,8 +161,7 @@ namespace QuotesDownloader
                         downloader = new Downloader(client, outputType, location, symbol, from, to, level2, vwap);
                     SetSignalHandler(signal =>
                     {
-                        if (downloader != null)
-                            downloader.CancelDownload();
+                        downloader?.CancelDownload();
                     }, true);
                     downloader.Start();
                     while (!downloader.IsFinished)
