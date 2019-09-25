@@ -180,7 +180,6 @@ namespace QuotesDownloader
                     Console.WriteLine("Error : " + ex.Message);
                 }
             }
-            Console.Read();
             FreeConsole();
         }
     }

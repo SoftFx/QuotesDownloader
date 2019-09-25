@@ -136,14 +136,14 @@ namespace QuotesDownloader
                         builder.Append(quote.CreatingTime.ToString("yyyy-MM-dd HH:mm:ss.fff;", CultureInfo.InvariantCulture));
                         foreach (QuoteEntry entry in quote.Bids)
                             if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                                builder.AppendFormat("{0};{1};", entry.Price, -entry.Volume);
+                                builder.AppendFormat("{0};{1};", (decimal)entry.Price, (decimal)-entry.Volume);
                             else
-                                builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
+                                builder.AppendFormat("{0};{1};", (decimal)entry.Price, (decimal)entry.Volume);
                         foreach (QuoteEntry entry in quote.Asks)
                             if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                                builder.AppendFormat("{0};{1};", entry.Price, -entry.Volume);
+                                builder.AppendFormat("{0};{1};", (decimal)entry.Price, (decimal)-entry.Volume);
                             else
-                                builder.AppendFormat("{0};{1};", entry.Price, entry.Volume);
+                                builder.AppendFormat("{0};{1};", (decimal)entry.Price, (decimal)entry.Volume);
                         builder.Remove(builder.Length - 1, 1);
                         file.WriteLine(builder);
                     }
@@ -310,18 +310,18 @@ namespace QuotesDownloader
                     if (quote.Bids.Count != 0)
                     {
                         if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                            builder.Append($"{quote.Bids[0].Price},{-quote.Bids[0].Volume},");
+                            builder.Append($"{(decimal)quote.Bids[0].Price},{(decimal)-quote.Bids[0].Volume},");
                         else
-                            builder.Append($"{quote.Bids[0].Price},{quote.Bids[0].Volume},");
+                            builder.Append($"{(decimal)quote.Bids[0].Price},{(decimal)quote.Bids[0].Volume},");
                     }
                     else
                         builder.Append(",,");
                     if (quote.Asks.Count != 0)
                     {
                         if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                            builder.Append($"{quote.Asks[0].Price},{-quote.Asks[0].Volume},");
+                            builder.Append($"{(decimal)quote.Asks[0].Price},{(decimal)-quote.Asks[0].Volume},");
                         else
-                            builder.Append($"{quote.Asks[0].Price},{quote.Asks[0].Volume},");
+                            builder.Append($"{(decimal)quote.Asks[0].Price},{(decimal)quote.Asks[0].Volume},");
                     }
                     else
                         builder.Append(",,");
@@ -371,18 +371,18 @@ namespace QuotesDownloader
                         if (i < quote.Bids.Count)
                         {
                             if (quote.TickType.HasFlag(TickTypes.IndicativeBid) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                                builder.Append($"{quote.Bids[i].Price},{-quote.Bids[i].Volume},");
+                                builder.Append($"{(decimal)quote.Bids[i].Price},{(decimal)-quote.Bids[i].Volume},");
                             else
-                                builder.Append($"{quote.Bids[i].Price},{quote.Bids[i].Volume},");
+                                builder.Append($"{(decimal)quote.Bids[i].Price},{(decimal)quote.Bids[i].Volume},");
                         }
                         else
                             builder.Append(",,");
                         if (i < quote.Asks.Count)
                         {
                             if (quote.TickType.HasFlag(TickTypes.IndicativeAsk) || quote.TickType.HasFlag(TickTypes.IndicativeBidAsk))
-                                builder.Append($"{quote.Asks[i].Price},{-quote.Asks[i].Volume},");
+                                builder.Append($"{(decimal)quote.Asks[i].Price},{(decimal)-quote.Asks[i].Volume},");
                             else
-                                builder.Append($"{quote.Asks[i].Price},{quote.Asks[i].Volume},");
+                                builder.Append($"{(decimal)quote.Asks[i].Price},{(decimal)quote.Asks[i].Volume},");
                         }
                         else
                             builder.Append(",,");
@@ -445,11 +445,11 @@ namespace QuotesDownloader
                             builder.Append(-repeatingQuotes);
                         builder.Append(",");
                         if (quote.Bids.Count != 0)
-                            builder.Append($"{quote.Bids[0].Price},{quote.Bids[0].Volume},");
+                            builder.Append($"{(decimal)quote.Bids[0].Price},{(decimal)quote.Bids[0].Volume},");
                         else
                             builder.Append(",,");
                         if (quote.Asks.Count != 0)
-                            builder.Append($"{quote.Asks[0].Price},{quote.Asks[0].Volume},");
+                            builder.Append($"{(decimal)quote.Asks[0].Price},{(decimal)quote.Asks[0].Volume},");
                         else
                             builder.Append(",,");
                         builder.Remove(builder.Length - 1, 1);
@@ -483,7 +483,7 @@ namespace QuotesDownloader
                 {
                     file.WriteLine("date_time;open;close;low;high;volume");
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
-                        file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), bar.Open, bar.Close, bar.Low, bar.High, bar.Volume));
+                        file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), (decimal)bar.Open, (decimal)bar.Close, (decimal)bar.Low, (decimal)bar.High, (decimal)bar.Volume));
                 }
                 this.Log("Bars are downloaded successfully");
             }
@@ -553,7 +553,7 @@ namespace QuotesDownloader
                             if (repeatingQuotes > 0)
                                 builder.Append(-repeatingQuotes);
                             builder.Append(",");
-                            builder.Append($"{bar.Open},{bar.High},{bar.Low},{bar.Close},{bar.Volume},");
+                            builder.Append($"{(decimal)bar.Open},{(decimal)bar.High},{(decimal)bar.Low},{(decimal)bar.Close},{(decimal)bar.Volume},");
                             builder.Remove(builder.Length - 1, 1);
                             file.WriteLine(builder);
                         }
@@ -593,7 +593,7 @@ namespace QuotesDownloader
                             if (repeatingQuotes > 0)
                                 builder.Append(-repeatingQuotes);
                             builder.Append(",");
-                            builder.Append($"{bar.Open},{bar.High},{bar.Low},{bar.Close},{bar.Volume},");
+                            builder.Append($"{(decimal)bar.Open},{(decimal)bar.High},{(decimal)bar.Low},{(decimal)bar.Close},{(decimal)bar.Volume},");
                             builder.Remove(builder.Length - 1, 1);
                             file.WriteLine(builder);
                         }
