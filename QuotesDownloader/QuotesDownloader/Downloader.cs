@@ -77,7 +77,12 @@ namespace QuotesDownloader
 
         public void CancelDownload()
         {
+            enumeratorTicks?.Dispose();
+
+            enumeratorBars?.Dispose();
+
             this.thread?.Abort();
+
             if (!string.IsNullOrEmpty(currentTempFile))
                 File.Delete(currentTempFile);
         }
@@ -122,6 +127,7 @@ namespace QuotesDownloader
         {
             QuoteDepth marketDepth = includeLevel2 ? QuoteDepth.Level2 : QuoteDepth.Top;
             DownloadQuotesEnumerator enumerator = quoteClient.DownloadQuotes(symbol, marketDepth, from, to, -1);
+            enumeratorTicks = enumerator;
             if (outputType == "csv")
             {
                 if (includeVWAP)
@@ -421,6 +427,8 @@ namespace QuotesDownloader
                     continue;
                 }
 
+                enumeratorTicks = enumerator;
+
                 char sign = deg >= 0 ? '+' : '-';
                 string filename = $"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv";
                 using (StreamWriter file = File.CreateText(filename))
@@ -478,6 +486,7 @@ namespace QuotesDownloader
             if (outputType == "csv")
             {
                 DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
+                enumeratorBars = enumerator;
                 string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.csv", symbol.Replace("/", "%2F"), priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 using (StreamWriter file = File.CreateText(path))
                 {
@@ -490,6 +499,7 @@ namespace QuotesDownloader
             else if (outputType == "hdf5")
             {
                 DownloadBarsEnumerator enumerator = quoteClient.DownloadBars(symbol, priceType, period, from, to, -1);
+                enumeratorBars = enumerator;
                 string path = Path.Combine(this.location, string.Format("{0} {1} {2} {3} {4}.h5", symbol.Replace("/", "%2F"), priceType, period, from.ToString(" yyyyMMdd"), to.ToString(" yyyyMMdd")));
                 H5FileId fileId = H5F.create(path, H5F.CreateMode.ACC_TRUNC);
                
@@ -533,6 +543,7 @@ namespace QuotesDownloader
                 string path = Path.Combine(location, $"{symbol.Replace("/", "%2F")}_{period}_{from.ToString("yyyy-MM-dd")}_{to.ToString("yyyy-MM-dd")}.zip");
                 using (ZipOutputStream zs = new ZipOutputStream(File.Create(path)))
                 {
+                    enumeratorBars = BidEnumerator;
                     string filename = $"{period} bid.csv";
                     using (StreamWriter file = File.CreateText(filename))
                     {
@@ -573,6 +584,7 @@ namespace QuotesDownloader
                     File.Delete(filename);
                     currentTempFile = null;
 
+                    enumeratorBars = AskEnumerator;
                     filename = $"{period} ask.csv";
                     using (StreamWriter file = File.CreateText(filename))
                     {
@@ -670,6 +682,10 @@ namespace QuotesDownloader
         #region Members
 
         readonly QuoteStore quoteClient;
+
+        DownloadQuotesEnumerator enumeratorTicks;
+        DownloadBarsEnumerator enumeratorBars;
+
         readonly string outputType;
         readonly string location;
         readonly string symbol;
