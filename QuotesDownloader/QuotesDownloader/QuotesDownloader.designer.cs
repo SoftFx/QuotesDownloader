@@ -38,8 +38,8 @@
             this.m_location = new System.Windows.Forms.Label();
             this.m_download = new System.Windows.Forms.Button();
             this.m_connection = new System.Windows.Forms.Button();
-            this.m_symbols = new System.Windows.Forms.ComboBox();
             this.m_groups = new System.Windows.Forms.GroupBox();
+            this.m_checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.m_storageType = new System.Windows.Forms.ComboBox();
             this.m_quotesType = new System.Windows.Forms.ComboBox();
             this.m_log = new System.Windows.Forms.ListBox();
@@ -58,6 +58,7 @@
             this.m_usernameLabel = new System.Windows.Forms.Label();
             this.m_addressLabel = new System.Windows.Forms.Label();
             this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             label1 = new System.Windows.Forms.Label();
             this.m_groups.SuspendLayout();
             this.m_LogContextMenu.SuspendLayout();
@@ -67,7 +68,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(381, 80);
+            label1.Location = new System.Drawing.Point(421, 130);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(65, 13);
             label1.TabIndex = 1;
@@ -143,22 +144,13 @@
             this.m_connection.UseVisualStyleBackColor = true;
             this.m_connection.Click += new System.EventHandler(this.OnConnection);
             // 
-            // m_symbols
-            // 
-            this.m_symbols.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.m_symbols.FormattingEnabled = true;
-            this.m_symbols.Location = new System.Drawing.Point(492, 12);
-            this.m_symbols.Name = "m_symbols";
-            this.m_symbols.Size = new System.Drawing.Size(121, 21);
-            this.m_symbols.TabIndex = 9;
-            this.m_symbols.SelectedIndexChanged += new System.EventHandler(this.m_symbols_SelectedIndexChanged);
-            // 
             // m_groups
             // 
+            this.m_groups.Controls.Add(this.progressBar1);
+            this.m_groups.Controls.Add(this.m_checkedListBox);
             this.m_groups.Controls.Add(this.m_storageType);
             this.m_groups.Controls.Add(label1);
             this.m_groups.Controls.Add(this.m_quotesType);
-            this.m_groups.Controls.Add(this.m_symbols);
             this.m_groups.Controls.Add(this.m_to);
             this.m_groups.Controls.Add(this.m_dateAndTimeTo);
             this.m_groups.Controls.Add(this.m_dateAndTimeFrom);
@@ -168,11 +160,21 @@
             this.m_groups.TabIndex = 10;
             this.m_groups.TabStop = false;
             // 
+            // m_checkedListBox
+            // 
+            this.progressBar1.Visible = false;
+            this.m_checkedListBox.FormattingEnabled = true;
+            this.m_checkedListBox.Location = new System.Drawing.Point(492, 9);
+            this.m_checkedListBox.Name = "m_checkedListBox";
+            this.m_checkedListBox.Size = new System.Drawing.Size(120, 64);
+            this.m_checkedListBox.TabIndex = 10;
+            this.m_checkedListBox.SelectedIndexChanged += new System.EventHandler(this.m_checkedListBox_SelectedIndexChanged);
+            // 
             // m_storageType
             // 
             this.m_storageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_storageType.FormattingEnabled = true;
-            this.m_storageType.Location = new System.Drawing.Point(492, 76);
+            this.m_storageType.Location = new System.Drawing.Point(492, 122);
             this.m_storageType.Name = "m_storageType";
             this.m_storageType.Size = new System.Drawing.Size(121, 21);
             this.m_storageType.TabIndex = 2;
@@ -207,7 +209,7 @@
             "Ask D1",
             "Ask W1",
             "Ask MN1"});
-            this.m_quotesType.Location = new System.Drawing.Point(492, 44);
+            this.m_quotesType.Location = new System.Drawing.Point(491, 90);
             this.m_quotesType.Name = "m_quotesType";
             this.m_quotesType.Size = new System.Drawing.Size(121, 21);
             this.m_quotesType.TabIndex = 0;
@@ -362,6 +364,15 @@
             // m_toolTip
             // 
             this.m_toolTip.ToolTipTitle = "Invalid port number";
+            this.m_toolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.m_toolTip_Popup);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(117, 70);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(135, 23);
+            this.progressBar1.TabIndex = 11;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // QuotesDownloader
             // 
@@ -403,7 +414,6 @@
         private System.Windows.Forms.Label m_location;
         private System.Windows.Forms.Button m_download;
         private System.Windows.Forms.Button m_connection;
-        private System.Windows.Forms.ComboBox m_symbols;
         private System.Windows.Forms.GroupBox m_groups;
         private System.Windows.Forms.ListBox m_log;
         private System.Windows.Forms.ContextMenuStrip m_LogContextMenu;
@@ -423,5 +433,7 @@
         private System.Windows.Forms.Label m_portLabel;
         private System.Windows.Forms.ToolTip m_toolTip;
         private System.Windows.Forms.ComboBox m_storageType;
+        private System.Windows.Forms.CheckedListBox m_checkedListBox;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

@@ -117,7 +117,7 @@ namespace QuotesDownloader
             }
             catch (Exception ex)
             {
-                this.Log(ex.Message);
+                this.Log(ex.Message + " " + ex.TargetSite);
             }
             this.RaiseFinish();
             this.thread = null;
@@ -154,7 +154,7 @@ namespace QuotesDownloader
                         file.WriteLine(builder);
                     }
                 }
-                this.Log("Quotes are downloaded successfully");
+                this.Log($"Quotes by {symbol} are downloaded successfully");
             }
             else if (outputType == "hdf5")
             {
@@ -267,7 +267,7 @@ namespace QuotesDownloader
                 H5D.close(dateQuotesSetId);
 
                 H5F.close(fileId);
-                this.Log("Quotes are downloaded successfully");
+                this.Log($"Quotes by {symbol} are downloaded successfully");
             }
             else if (outputType == "csv_zip")
             {
@@ -287,7 +287,7 @@ namespace QuotesDownloader
                     else
                         DownloadTicksCSVNew(enumerator, zs);
                 }
-                this.Log("Quotes are downloaded successfully");
+                this.Log($"Quotes by {symbol} are downloaded successfully");
             }
         }
 

@@ -10,6 +10,8 @@
     using System.Security.Cryptography.X509Certificates;
     using System.Net.Security;
     using TimeoutException = TickTrader.FDK.Common.TimeoutException;
+    using System.Threading;
+    using System.Collections.Generic;
 
     public partial class QuotesDownloader : Form
     {
@@ -17,12 +19,14 @@
         #region Members
 
         QuoteStore quoteClient;
-        Downloader downloader;
+        List<Downloader> downloadsList;
+        bool isDownloaded = false;
 
         #endregion
 
         public QuotesDownloader()
         {
+            downloadsList = new List<Downloader>();
             this.InitializeComponent();
             this.Text = string.Format("{0} (FDK {1})", this.Text, Library.Version);
 
@@ -178,7 +182,7 @@
             this.m_connectionParameters.Enabled = true;
             this.m_browse.Enabled = true;
             this.m_download.Enabled = false;
-            this.m_symbols.Items.Clear();
+            this.m_checkedListBox.Items.Clear();
         }
 
         #region Client Events
@@ -238,14 +242,10 @@
                 return;
             }
 
-            this.m_symbols.Items.Clear();
+            this.m_checkedListBox.Items.Clear();
             foreach (var symbol in symbols)
             {
-                this.m_symbols.Items.Add(symbol);
-            }
-            if (symbols.Length > 0)
-            {
-                this.m_symbols.SelectedIndex = 0;
+                this.m_checkedListBox.Items.Add(symbol);
             }
             this.Log("Symbols information is received");
             this.ApplyConnectedState();
@@ -257,25 +257,65 @@
 
         void OnDownload(object sender, EventArgs e)
         {
-            if (this.downloader == null)
+            if(isDownloaded)
+            {
+                foreach (var download in downloadsList)
+                {
+                    download.CancelDownload();
+                }
+                this.m_download.Text = "Download";
+                progressBar1.Visible = false;
+                this.m_browse.Enabled = true;
+                this.m_checkedListBox.Enabled = true;
+                this.m_quotesType.Enabled = true;
+                this.m_storageType.Enabled = true;
+                downloadsList.Clear();
+                isDownloaded = false;
+                return;
+            }
+            isDownloaded = true;
+            this.m_download.Text = "Break";
+            this.m_browse.Enabled = false;
+            this.m_checkedListBox.Enabled = false;
+            this.m_quotesType.Enabled = false;
+            this.m_storageType.Enabled = false;
+            this.progressBar1.Visible = true;
+            this.progressBar1.Enabled = true;
+            this.progressBar1.Minimum = 0;
+            this.progressBar1.Maximum = m_checkedListBox.CheckedItems.Count;
+            this.progressBar1.Step = 1;
+            this.progressBar1.Value = 0;
+            for (int i = 0; i <  m_checkedListBox.CheckedItems.Count; i++)
+            {
+                DownloadQuote(m_checkedListBox.CheckedItems[i].ToString());
+            }
+            foreach(var download in downloadsList)
+            {
+                download.Start();
+            }
+        }
+
+        void DownloadQuote(string quoteSymbol)
+        {
+            //if (this.downloader == null)
             {
                 var outputType = m_storageType.SelectedItem.ToString();
                 var location = this.m_location.Text;
-                var symbol = this.m_symbols.Text;
+                var symbol = quoteSymbol;
                 var from = this.m_dateAndTimeFrom.Value;
                 var to = this.m_dateAndTimeTo.Value;
-
+                Downloader downloader;
                 if (this.m_quotesType.SelectedIndex == 0)
                 {
-                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to);
+                    downloader = new Downloader(quoteClient, outputType, location, symbol, from, to);
                 }
                 else if (this.m_quotesType.SelectedIndex == 1)
                 {
-                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, true);
+                    downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, true);
                 }
                 else if (this.m_quotesType.SelectedIndex == 2)
                 {
-                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, false, true);
+                    downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, false, true);
                 }
                 else
                 {
@@ -292,28 +332,13 @@
                     var stBarPeriod = match.Groups[2].Value;
 
                     var barPeriod = new BarPeriod(stBarPeriod);
-                    this.downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, priceType, barPeriod);
+                    downloader = new Downloader(quoteClient, outputType, location, symbol, from, to, priceType, barPeriod);
 
                 }
 
-                this.downloader.Message += this.OnMessage;
-                this.downloader.Finish += this.OnFinish;
-                this.downloader.Start();
-                this.m_download.Text = "Break";
-                this.m_browse.Enabled = false;
-                this.m_symbols.Enabled = false;
-                this.m_quotesType.Enabled = false;
-                this.m_storageType.Enabled = false;
-            }
-            else
-            {
-                this.downloader.CancelDownload();
-                this.downloader = null;
-                this.m_download.Text = "Download";
-                this.m_browse.Enabled = true;
-                this.m_symbols.Enabled = true;
-                this.m_quotesType.Enabled = true;
-                this.m_storageType.Enabled = true;
+                downloader.Message += this.OnMessage;
+                downloader.Finish += this.OnFinish;
+                downloadsList.Add(downloader);
             }
         }
 
@@ -324,16 +349,22 @@
                 this.InvokeInPrimaryThread(OnFinish, sender, e);
                 return;
             }
-            if (this.downloader != null)
+            if (sender != null)
             {
-                this.downloader.Join();
-                this.downloader = null;
+                ((Downloader)sender).Join();
             }
-            this.m_download.Text = "Download";
-            this.m_browse.Enabled = true;
-            this.m_symbols.Enabled = true;
-            this.m_quotesType.Enabled = true;
-            this.m_storageType.Enabled = true;
+            progressBar1.PerformStep();
+            if(progressBar1.Value == m_checkedListBox.CheckedItems.Count)
+            {
+                this.m_download.Text = "Download";
+                progressBar1.Visible = false;
+                this.m_browse.Enabled = true;
+                this.m_checkedListBox.Enabled = true;
+                this.m_quotesType.Enabled = true;
+                this.m_storageType.Enabled = true;
+                downloadsList.Clear();
+                isDownloaded = false;
+            }
         }
 
         void OnMessage(object sender, EventArgs<string> e)
@@ -358,13 +389,10 @@
 
         void OnClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.downloader != null)
+            if (isDownloaded)
             {
-                if (!this.downloader.IsFinished)
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("You should stop quotes downloading and wait for finish of background synchronization");
-                }
+                e.Cancel = true;
+                MessageBox.Show("You should stop quotes downloading and wait for finish of background synchronization");
             }
         }
 
@@ -435,6 +463,21 @@
         }
 
         private void QuotesDownloader_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void m_toolTip_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void m_checkedListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void progressBar1_Click(object sender, EventArgs e)
         {
 
         }
