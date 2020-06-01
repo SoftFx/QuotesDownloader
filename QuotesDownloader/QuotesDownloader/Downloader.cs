@@ -20,7 +20,7 @@ namespace QuotesDownloader
         {
             this.thread = new Thread(ThreadMethod);
         }
-
+        public static double filesSize = 0;
         public Downloader(QuoteStore quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, Boolean includeLevel2 = false, bool includeVWAP = false)
             : this()
         {
@@ -113,11 +113,17 @@ namespace QuotesDownloader
             }
             catch (ThreadAbortException ex)
             {
-                this.Log("Download aborted");
+                //this.Log("Download aborted");
+            }
+            catch(TickTrader.FDK.Common.TimeoutException ex)
+            {
+                Thread.Sleep(100);
+                ThreadMethod();
+                return;
             }
             catch (Exception ex)
             {
-                this.Log(ex.Message + " " + ex.TargetSite);
+                this.Log(ex.ToString());
             }
             this.RaiseFinish();
             this.thread = null;
@@ -417,12 +423,12 @@ namespace QuotesDownloader
         {
             for (int deg = -16; deg <= 16; deg++)
             {
-                DownloadQuotesEnumerator enumerator;
+                DownloadQuotesEnumerator enumerator = null;
                 try
                 {
-                    enumerator = quoteClient.DownloadVWAPQuotes(symbol, (short) deg, from, to, 500);
+                    enumerator = quoteClient.DownloadVWAPQuotes(symbol, (short) deg, from, to, 5000);
                 }
-                catch
+                catch(Exception ex)
                 {
                     continue;
                 }
@@ -430,7 +436,7 @@ namespace QuotesDownloader
                 enumeratorTicks = enumerator;
 
                 char sign = deg >= 0 ? '+' : '-';
-                string filename = $"ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv";
+                string filename = $"{symbol} ticks vwap e{(Math.Sign(deg) == -1 ? '-' : '+')}{Math.Abs(deg):d2}.csv";
                 using (StreamWriter file = File.CreateText(filename))
                 {
                     currentTempFile = filename;
@@ -494,7 +500,7 @@ namespace QuotesDownloader
                     for (Bar bar = enumerator.Next(-1); bar != null; bar = enumerator.Next(-1))
                         file.WriteLine(string.Format("{0};{1};{2};{3};{4};{5}", bar.From.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), (decimal)bar.Open, (decimal)bar.Close, (decimal)bar.Low, (decimal)bar.High, (decimal)bar.Volume));
                 }
-                this.Log("Bars are downloaded successfully");
+                this.Log($"Bars {symbol} are downloaded successfully");
             }
             else if (outputType == "hdf5")
             {
@@ -534,7 +540,7 @@ namespace QuotesDownloader
                 WriteDataToNewFile(fileId, "DataBars", dataBarsArray, barsData.Count, 2, dataBarsTypeId);
 
                 H5F.close(fileId);
-                this.Log("Bars are downloaded successfully");
+                this.Log($"Bars {symbol} are downloaded successfully");
             }
             else if (outputType == "csv_zip")
             {
@@ -625,7 +631,7 @@ namespace QuotesDownloader
                     File.Delete(filename);
                     currentTempFile = null;
                 }
-                this.Log("Bars are downloaded successfully");
+                this.Log($"Bars {symbol} are downloaded successfully");
             }
         }
 

@@ -12,6 +12,8 @@
     using TimeoutException = TickTrader.FDK.Common.TimeoutException;
     using System.Threading;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
     public partial class QuotesDownloader : Form
     {
@@ -21,6 +23,8 @@
         QuoteStore quoteClient;
         List<Downloader> downloadsList;
         bool isDownloaded = false;
+        private string currentLocation;
+        private DateTime startDownload;
 
         #endregion
 
@@ -28,7 +32,7 @@
         {
             downloadsList = new List<Downloader>();
             this.InitializeComponent();
-            this.Text = string.Format("{0} (FDK {1})", this.Text, Library.Version);
+            this.Text = string.Format("{0} {1} (FDK {2})", this.Text, Assembly.GetExecutingAssembly().GetName().Version.ToString(), Library.Version.Split()[0]);
 
             this.m_storageType.Items.Add("csv");
             this.m_storageType.Items.Add("hdf5");
@@ -268,9 +272,11 @@
                 this.m_browse.Enabled = true;
                 this.m_checkedListBox.Enabled = true;
                 this.m_quotesType.Enabled = true;
-                this.m_storageType.Enabled = true;
+                if(m_quotesType.SelectedIndex != 2)
+                    this.m_storageType.Enabled = true;
                 downloadsList.Clear();
                 isDownloaded = false;
+                Log("Downloads aborted");
                 return;
             }
             isDownloaded = true;
@@ -285,6 +291,8 @@
             this.progressBar1.Maximum = m_checkedListBox.CheckedItems.Count;
             this.progressBar1.Step = 1;
             this.progressBar1.Value = 0;
+            startDownload = DateTime.Now;
+            currentLocation = this.m_location.Text + "\\" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             for (int i = 0; i <  m_checkedListBox.CheckedItems.Count; i++)
             {
                 DownloadQuote(m_checkedListBox.CheckedItems[i].ToString());
@@ -300,7 +308,8 @@
             //if (this.downloader == null)
             {
                 var outputType = m_storageType.SelectedItem.ToString();
-                var location = this.m_location.Text;
+                var location = currentLocation;
+
                 var symbol = quoteSymbol;
                 var from = this.m_dateAndTimeFrom.Value;
                 var to = this.m_dateAndTimeTo.Value;
@@ -356,12 +365,15 @@
             progressBar1.PerformStep();
             if(progressBar1.Value == m_checkedListBox.CheckedItems.Count)
             {
+                var duration = DateTime.Now - startDownload;
+                GetSpeed();
                 this.m_download.Text = "Download";
                 progressBar1.Visible = false;
                 this.m_browse.Enabled = true;
                 this.m_checkedListBox.Enabled = true;
                 this.m_quotesType.Enabled = true;
-                this.m_storageType.Enabled = true;
+                if(m_quotesType.SelectedIndex != 2)
+                    this.m_storageType.Enabled = true;
                 downloadsList.Clear();
                 isDownloaded = false;
             }
@@ -455,6 +467,16 @@
             }
         }
 
+        void GetSpeed()
+        {
+            var duration = DateTime.Now - startDownload;
+            Log("Total time: " + duration.TotalSeconds.ToString() + " seconds");
+            DirectoryInfo info = new DirectoryInfo(currentLocation);
+            double totalSize = info.EnumerateFiles().Sum(file => file.Length) / 1024f / 1024f;
+            Log("Total size: " + String.Format("{0:f2}", totalSize) + " mb");
+            Log("Speed: " + String.Format("{0:f2}", totalSize / duration.TotalSeconds) + " mb/s");
+            currentLocation = "";
+        }
         #endregion
 
         private void m_symbols_SelectedIndexChanged(object sender, EventArgs e)
@@ -478,6 +500,43 @@
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (m_checkedListBox.CheckedItems.Count == 0)
+            {
+                for (int i = 0; i < m_checkedListBox.Items.Count; i++)
+                {
+                    m_checkedListBox.SetItemChecked(i, true);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < m_checkedListBox.Items.Count; i++)
+                {
+                    m_checkedListBox.SetItemChecked(i, false);
+                }
+            }
+        }
+
+        private void m_quotesType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.m_quotesType.SelectedIndex == 2)
+            {
+                m_storageType.SelectedIndex = 2;
+                m_storageType.Enabled = false;
+            }
+            else
+            {
+                m_storageType.SelectedIndex = 0;
+                m_storageType.Enabled = true;
+            }
+        }
+
+        private void m_storageType_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
