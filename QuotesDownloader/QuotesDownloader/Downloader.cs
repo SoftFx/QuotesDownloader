@@ -162,15 +162,15 @@ namespace QuotesDownloader
                 }
                 if (includeLevel2)
                 {
-                    this.Log($"level2 by {symbol} are downloaded successfully");
+                    this.Log($"level2 {symbol} are downloaded successfully");
                 }
                 else if (includeVWAP)
                 {
-                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                    this.Log($"VWAP {symbol} are downloaded successfully");
                 }
                 else
                 {
-                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                    this.Log($"Ticks {symbol} are downloaded successfully");
                 }
             }
             else if (outputType == "hdf5")
@@ -286,15 +286,15 @@ namespace QuotesDownloader
                 H5F.close(fileId);
                 if(includeLevel2)
                 {
-                    this.Log($"level2 by {symbol} are downloaded successfully");
+                    this.Log($"level2 {symbol} are downloaded successfully");
                 }
                 else if(includeVWAP)
                 {
-                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                    this.Log($"VWAP {symbol} are downloaded successfully");
                 }
                 else
                 {
-                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                    this.Log($"Ticks {symbol} are downloaded successfully");
                 }
             }
             else if (outputType == "csv_zip")
@@ -317,15 +317,15 @@ namespace QuotesDownloader
                 }
                 if (includeLevel2)
                 {
-                    this.Log($"level2 by {symbol} are downloaded successfully");
+                    this.Log($"level2 {symbol} are downloaded successfully");
                 }
                 else if (includeVWAP)
                 {
-                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                    this.Log($"VWAP {symbol} are downloaded successfully");
                 }
                 else
                 {
-                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                    this.Log($"Ticks {symbol} are downloaded successfully");
                 }
             }
         }
