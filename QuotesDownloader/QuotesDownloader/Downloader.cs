@@ -160,7 +160,18 @@ namespace QuotesDownloader
                         file.WriteLine(builder);
                     }
                 }
-                this.Log($"Quotes by {symbol} are downloaded successfully");
+                if (includeLevel2)
+                {
+                    this.Log($"level2 by {symbol} are downloaded successfully");
+                }
+                else if (includeVWAP)
+                {
+                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                }
+                else
+                {
+                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                }
             }
             else if (outputType == "hdf5")
             {
@@ -273,7 +284,18 @@ namespace QuotesDownloader
                 H5D.close(dateQuotesSetId);
 
                 H5F.close(fileId);
-                this.Log($"Quotes by {symbol} are downloaded successfully");
+                if(includeLevel2)
+                {
+                    this.Log($"level2 by {symbol} are downloaded successfully");
+                }
+                else if(includeVWAP)
+                {
+                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                }
+                else
+                {
+                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                }
             }
             else if (outputType == "csv_zip")
             {
@@ -293,7 +315,18 @@ namespace QuotesDownloader
                     else
                         DownloadTicksCSVNew(enumerator, zs);
                 }
-                this.Log($"Quotes by {symbol} are downloaded successfully");
+                if (includeLevel2)
+                {
+                    this.Log($"level2 by {symbol} are downloaded successfully");
+                }
+                else if (includeVWAP)
+                {
+                    this.Log($"VWAP by {symbol} are downloaded successfully");
+                }
+                else
+                {
+                    this.Log($"Ticks by {symbol} are downloaded successfully");
+                }
             }
         }
 
