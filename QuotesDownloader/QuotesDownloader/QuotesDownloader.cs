@@ -26,6 +26,8 @@
         private string currentLocation;
         private DateTime startDownload;
 
+        public static bool isCanceled = false;
+
         #endregion
 
         public QuotesDownloader()
@@ -263,6 +265,7 @@
         {
             if(isDownloaded)
             {
+                isCanceled = true;
                 foreach (var download in downloadsList)
                 {
                     download.CancelDownload();
@@ -277,6 +280,7 @@
                 downloadsList.Clear();
                 isDownloaded = false;
                 Log("Downloads aborted");
+                isCanceled = false;
                 return;
             }
             isDownloaded = true;
@@ -293,13 +297,17 @@
             this.progressBar1.Value = 0;
             startDownload = DateTime.Now;
             currentLocation = this.m_location.Text + "\\" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            downloadsList.Clear();
             for (int i = 0; i <  m_checkedListBox.CheckedItems.Count; i++)
             {
                 DownloadQuote(m_checkedListBox.CheckedItems[i].ToString());
             }
             foreach(var download in downloadsList)
             {
+                if (isCanceled)
+                    break;
                 download.Start();
+                //download.Wait();
             }
         }
 
@@ -360,7 +368,7 @@
             }
             if (sender != null)
             {
-                ((Downloader)sender).Join();
+                ((Downloader)sender).Wait();
             }
             progressBar1.PerformStep();
             if(progressBar1.Value == m_checkedListBox.CheckedItems.Count)

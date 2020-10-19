@@ -13,12 +13,13 @@ namespace QuotesDownloader
     using System.Collections.Generic;
     using ICSharpCode.SharpZipLib.Zip;
     using ICSharpCode.SharpZipLib.Core;
+    using System.Threading.Tasks;
 
     public class Downloader
     {
         Downloader()
         {
-            this.thread = new Thread(ThreadMethod);
+            this.thread = new Task(ThreadMethod, cancelSource.Token);
         }
         public static double filesSize = 0;
         public Downloader(QuoteStore quoteClient, string outputType, String location, String symbol, DateTime from, DateTime to, Boolean includeLevel2 = false, bool includeVWAP = false)
@@ -63,25 +64,37 @@ namespace QuotesDownloader
 
         public void Start()
         {
-            this.thread.Start();
+            try
+            {
+                this.thread.Start();
+            }
+            catch
+            {
+                ;
+            }
         }
 
-        public void Join()
+        public void Wait()
+        {
+            if (this.thread != null && this.thread.IsCanceled != true)
+                thread.Wait();
+        }
+        
+        /*public void Join()
         {
             var thread = this.thread;
             if (thread != null)
             {
                 thread.Join();
             }
-        }
+        }*/
 
         public void CancelDownload()
         {
             enumeratorTicks?.Dispose();
 
             enumeratorBars?.Dispose();
-
-            this.thread?.Abort();
+            cancelSource.Cancel();
 
             if (!string.IsNullOrEmpty(currentTempFile))
                 File.Delete(currentTempFile);
@@ -126,7 +139,6 @@ namespace QuotesDownloader
                 this.Log(ex.ToString());
             }
             this.RaiseFinish();
-            this.thread = null;
         }
 
         void DownloadQuotes()
@@ -692,12 +704,15 @@ namespace QuotesDownloader
 
         void Log(string text)
         {
-            var eh = this.Message;
-
-            if (eh != null)
+            if (!cancelSource.IsCancellationRequested)
             {
-                var e = new EventArgs<string>(text);
-                eh(this, e);
+                var eh = this.Message;
+
+                if (eh != null)
+                {
+                    var e = new EventArgs<string>(text);
+                    eh(this, e);
+                }
             }
         }
 
@@ -709,6 +724,7 @@ namespace QuotesDownloader
 
         void RaiseFinish()
         {
+            //thread.Dispose();
             var eh = this.Finish;
             if (eh != null)
             {
@@ -734,7 +750,8 @@ namespace QuotesDownloader
         readonly Boolean includeVWAP;
         readonly PriceType priceType;
         readonly BarPeriod period;
-        Thread thread;
+        Task thread;
+        CancellationTokenSource cancelSource = new CancellationTokenSource();
         const int chunkSize = 32 * 4;  //32 - chunk size for 1 kB
 
         string currentTempFile;
