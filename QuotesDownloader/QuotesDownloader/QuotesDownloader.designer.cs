@@ -69,49 +69,59 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(421, 130);
+            label1.Location = new System.Drawing.Point(561, 160);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(65, 13);
+            label1.Size = new System.Drawing.Size(86, 17);
             label1.TabIndex = 1;
             label1.Text = "Output type:";
             // 
             // m_from
             // 
             this.m_from.AutoSize = true;
-            this.m_from.Location = new System.Drawing.Point(588, 32);
+            this.m_from.Location = new System.Drawing.Point(784, 39);
+            this.m_from.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_from.Name = "m_from";
-            this.m_from.Size = new System.Drawing.Size(30, 13);
+            this.m_from.Size = new System.Drawing.Size(40, 17);
             this.m_from.TabIndex = 0;
             this.m_from.Text = "From";
             // 
             // m_dateAndTimeFrom
             // 
-            this.m_dateAndTimeFrom.Location = new System.Drawing.Point(197, 14);
+            this.m_dateAndTimeFrom.CustomFormat = "MMMM/dd/yyyy hh:mm:ss tt";
+            this.m_dateAndTimeFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.m_dateAndTimeFrom.Location = new System.Drawing.Point(263, 17);
+            this.m_dateAndTimeFrom.Margin = new System.Windows.Forms.Padding(4);
             this.m_dateAndTimeFrom.Name = "m_dateAndTimeFrom";
-            this.m_dateAndTimeFrom.Size = new System.Drawing.Size(200, 20);
+            this.m_dateAndTimeFrom.Size = new System.Drawing.Size(265, 22);
             this.m_dateAndTimeFrom.TabIndex = 1;
             // 
             // m_to
             // 
             this.m_to.AutoSize = true;
-            this.m_to.Location = new System.Drawing.Point(146, 46);
+            this.m_to.Location = new System.Drawing.Point(195, 57);
+            this.m_to.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_to.Name = "m_to";
-            this.m_to.Size = new System.Drawing.Size(20, 13);
+            this.m_to.Size = new System.Drawing.Size(25, 17);
             this.m_to.TabIndex = 2;
             this.m_to.Text = "To";
             // 
             // m_dateAndTimeTo
             // 
-            this.m_dateAndTimeTo.Location = new System.Drawing.Point(197, 40);
+            this.m_dateAndTimeTo.CustomFormat = "MMMM/dd/yyyy hh:mm:ss tt";
+            this.m_dateAndTimeTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.m_dateAndTimeTo.Location = new System.Drawing.Point(263, 49);
+            this.m_dateAndTimeTo.Margin = new System.Windows.Forms.Padding(4);
             this.m_dateAndTimeTo.Name = "m_dateAndTimeTo";
-            this.m_dateAndTimeTo.Size = new System.Drawing.Size(200, 20);
+            this.m_dateAndTimeTo.Size = new System.Drawing.Size(265, 22);
             this.m_dateAndTimeTo.TabIndex = 3;
             // 
             // m_browse
             // 
-            this.m_browse.Location = new System.Drawing.Point(466, 132);
+            this.m_browse.Location = new System.Drawing.Point(621, 162);
+            this.m_browse.Margin = new System.Windows.Forms.Padding(4);
             this.m_browse.Name = "m_browse";
-            this.m_browse.Size = new System.Drawing.Size(75, 23);
+            this.m_browse.Size = new System.Drawing.Size(100, 28);
             this.m_browse.TabIndex = 4;
             this.m_browse.Text = "Browse";
             this.m_browse.UseVisualStyleBackColor = true;
@@ -120,16 +130,18 @@
             // m_location
             // 
             this.m_location.AutoSize = true;
-            this.m_location.Location = new System.Drawing.Point(588, 132);
+            this.m_location.Location = new System.Drawing.Point(784, 162);
+            this.m_location.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_location.Name = "m_location";
-            this.m_location.Size = new System.Drawing.Size(0, 13);
+            this.m_location.Size = new System.Drawing.Size(0, 17);
             this.m_location.TabIndex = 5;
             // 
             // m_download
             // 
-            this.m_download.Location = new System.Drawing.Point(466, 82);
+            this.m_download.Location = new System.Drawing.Point(621, 101);
+            this.m_download.Margin = new System.Windows.Forms.Padding(4);
             this.m_download.Name = "m_download";
-            this.m_download.Size = new System.Drawing.Size(75, 23);
+            this.m_download.Size = new System.Drawing.Size(100, 28);
             this.m_download.TabIndex = 6;
             this.m_download.Text = "Download";
             this.m_download.UseVisualStyleBackColor = true;
@@ -137,9 +149,10 @@
             // 
             // m_connection
             // 
-            this.m_connection.Location = new System.Drawing.Point(466, 32);
+            this.m_connection.Location = new System.Drawing.Point(621, 39);
+            this.m_connection.Margin = new System.Windows.Forms.Padding(4);
             this.m_connection.Name = "m_connection";
-            this.m_connection.Size = new System.Drawing.Size(75, 23);
+            this.m_connection.Size = new System.Drawing.Size(100, 28);
             this.m_connection.TabIndex = 8;
             this.m_connection.Text = "Connect";
             this.m_connection.UseVisualStyleBackColor = true;
@@ -156,17 +169,20 @@
             this.m_groups.Controls.Add(this.m_to);
             this.m_groups.Controls.Add(this.m_dateAndTimeTo);
             this.m_groups.Controls.Add(this.m_dateAndTimeFrom);
-            this.m_groups.Location = new System.Drawing.Point(442, 12);
+            this.m_groups.Location = new System.Drawing.Point(589, 15);
+            this.m_groups.Margin = new System.Windows.Forms.Padding(4);
             this.m_groups.Name = "m_groups";
-            this.m_groups.Size = new System.Drawing.Size(626, 159);
+            this.m_groups.Padding = new System.Windows.Forms.Padding(4);
+            this.m_groups.Size = new System.Drawing.Size(835, 196);
             this.m_groups.TabIndex = 10;
             this.m_groups.TabStop = false;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(403, 25);
+            this.button1.Location = new System.Drawing.Point(537, 31);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(83, 34);
+            this.button1.Size = new System.Drawing.Size(111, 42);
             this.button1.TabIndex = 12;
             this.button1.Text = "select all";
             this.button1.UseVisualStyleBackColor = true;
@@ -174,9 +190,10 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(117, 70);
+            this.progressBar1.Location = new System.Drawing.Point(156, 86);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(4);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(135, 23);
+            this.progressBar1.Size = new System.Drawing.Size(180, 28);
             this.progressBar1.TabIndex = 11;
             this.progressBar1.Visible = false;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
@@ -185,9 +202,10 @@
             // 
             this.m_checkedListBox.CheckOnClick = true;
             this.m_checkedListBox.FormattingEnabled = true;
-            this.m_checkedListBox.Location = new System.Drawing.Point(492, 9);
+            this.m_checkedListBox.Location = new System.Drawing.Point(656, 11);
+            this.m_checkedListBox.Margin = new System.Windows.Forms.Padding(4);
             this.m_checkedListBox.Name = "m_checkedListBox";
-            this.m_checkedListBox.Size = new System.Drawing.Size(120, 64);
+            this.m_checkedListBox.Size = new System.Drawing.Size(159, 72);
             this.m_checkedListBox.TabIndex = 10;
             this.m_checkedListBox.SelectedIndexChanged += new System.EventHandler(this.m_checkedListBox_SelectedIndexChanged);
             // 
@@ -195,9 +213,10 @@
             // 
             this.m_storageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_storageType.FormattingEnabled = true;
-            this.m_storageType.Location = new System.Drawing.Point(492, 122);
+            this.m_storageType.Location = new System.Drawing.Point(656, 150);
+            this.m_storageType.Margin = new System.Windows.Forms.Padding(4);
             this.m_storageType.Name = "m_storageType";
-            this.m_storageType.Size = new System.Drawing.Size(121, 21);
+            this.m_storageType.Size = new System.Drawing.Size(160, 24);
             this.m_storageType.TabIndex = 2;
             this.m_storageType.SelectedIndexChanged += new System.EventHandler(this.m_storageType_SelectedIndexChanged);
             // 
@@ -231,9 +250,10 @@
             "Ask D1",
             "Ask W1",
             "Ask MN1"});
-            this.m_quotesType.Location = new System.Drawing.Point(491, 90);
+            this.m_quotesType.Location = new System.Drawing.Point(655, 111);
+            this.m_quotesType.Margin = new System.Windows.Forms.Padding(4);
             this.m_quotesType.Name = "m_quotesType";
-            this.m_quotesType.Size = new System.Drawing.Size(121, 21);
+            this.m_quotesType.Size = new System.Drawing.Size(160, 24);
             this.m_quotesType.TabIndex = 0;
             this.m_quotesType.SelectedIndexChanged += new System.EventHandler(this.m_quotesType_SelectedIndexChanged);
             // 
@@ -242,31 +262,34 @@
             this.m_log.ContextMenuStrip = this.m_LogContextMenu;
             this.m_log.FormattingEnabled = true;
             this.m_log.HorizontalScrollbar = true;
-            this.m_log.Location = new System.Drawing.Point(12, 177);
+            this.m_log.ItemHeight = 16;
+            this.m_log.Location = new System.Drawing.Point(16, 218);
+            this.m_log.Margin = new System.Windows.Forms.Padding(4);
             this.m_log.Name = "m_log";
             this.m_log.ScrollAlwaysVisible = true;
-            this.m_log.Size = new System.Drawing.Size(1056, 303);
+            this.m_log.Size = new System.Drawing.Size(1407, 372);
             this.m_log.TabIndex = 11;
             // 
             // m_LogContextMenu
             // 
+            this.m_LogContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.m_LogContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.m_logContextMenuClearItem,
             this.m_logContextMenuSaveItem});
             this.m_LogContextMenu.Name = "m_LogContextMenu";
-            this.m_LogContextMenu.Size = new System.Drawing.Size(102, 48);
+            this.m_LogContextMenu.Size = new System.Drawing.Size(113, 52);
             // 
             // m_logContextMenuClearItem
             // 
             this.m_logContextMenuClearItem.Name = "m_logContextMenuClearItem";
-            this.m_logContextMenuClearItem.Size = new System.Drawing.Size(101, 22);
+            this.m_logContextMenuClearItem.Size = new System.Drawing.Size(112, 24);
             this.m_logContextMenuClearItem.Text = "Clear";
             this.m_logContextMenuClearItem.Click += new System.EventHandler(this.OnLogClear);
             // 
             // m_logContextMenuSaveItem
             // 
             this.m_logContextMenuSaveItem.Name = "m_logContextMenuSaveItem";
-            this.m_logContextMenuSaveItem.Size = new System.Drawing.Size(101, 22);
+            this.m_logContextMenuSaveItem.Size = new System.Drawing.Size(112, 24);
             this.m_logContextMenuSaveItem.Text = "Save";
             this.m_logContextMenuSaveItem.Click += new System.EventHandler(this.OnLogSave);
             // 
@@ -282,9 +305,11 @@
             this.m_connectionParameters.Controls.Add(this.m_passwordLabel);
             this.m_connectionParameters.Controls.Add(this.m_usernameLabel);
             this.m_connectionParameters.Controls.Add(this.m_addressLabel);
-            this.m_connectionParameters.Location = new System.Drawing.Point(12, 5);
+            this.m_connectionParameters.Location = new System.Drawing.Point(16, 6);
+            this.m_connectionParameters.Margin = new System.Windows.Forms.Padding(4);
             this.m_connectionParameters.Name = "m_connectionParameters";
-            this.m_connectionParameters.Size = new System.Drawing.Size(424, 166);
+            this.m_connectionParameters.Padding = new System.Windows.Forms.Padding(4);
+            this.m_connectionParameters.Size = new System.Drawing.Size(565, 204);
             this.m_connectionParameters.TabIndex = 12;
             this.m_connectionParameters.TabStop = false;
             this.m_connectionParameters.Text = "Connection parameters";
@@ -292,9 +317,10 @@
             // m_ssl
             // 
             this.m_ssl.AutoSize = true;
-            this.m_ssl.Location = new System.Drawing.Point(224, 49);
+            this.m_ssl.Location = new System.Drawing.Point(299, 60);
+            this.m_ssl.Margin = new System.Windows.Forms.Padding(4);
             this.m_ssl.Name = "m_ssl";
-            this.m_ssl.Size = new System.Drawing.Size(46, 17);
+            this.m_ssl.Size = new System.Drawing.Size(56, 21);
             this.m_ssl.TabIndex = 11;
             this.m_ssl.Text = "SSL";
             this.m_ssl.UseVisualStyleBackColor = true;
@@ -302,9 +328,10 @@
             // m_port
             // 
             this.m_port.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.m_port.Location = new System.Drawing.Point(108, 46);
+            this.m_port.Location = new System.Drawing.Point(144, 57);
+            this.m_port.Margin = new System.Windows.Forms.Padding(4);
             this.m_port.Name = "m_port";
-            this.m_port.Size = new System.Drawing.Size(100, 20);
+            this.m_port.Size = new System.Drawing.Size(132, 22);
             this.m_port.TabIndex = 10;
             this.m_port.Text = global::QuotesDownloader.Settings.Default.Port;
             this.m_port.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnPortKeyDown);
@@ -313,17 +340,19 @@
             // m_portLabel
             // 
             this.m_portLabel.AutoSize = true;
-            this.m_portLabel.Location = new System.Drawing.Point(51, 53);
+            this.m_portLabel.Location = new System.Drawing.Point(68, 65);
+            this.m_portLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_portLabel.Name = "m_portLabel";
-            this.m_portLabel.Size = new System.Drawing.Size(26, 13);
+            this.m_portLabel.Size = new System.Drawing.Size(34, 17);
             this.m_portLabel.TabIndex = 9;
             this.m_portLabel.Text = "Port";
             // 
             // m_save
             // 
-            this.m_save.Location = new System.Drawing.Point(108, 127);
+            this.m_save.Location = new System.Drawing.Point(144, 156);
+            this.m_save.Margin = new System.Windows.Forms.Padding(4);
             this.m_save.Name = "m_save";
-            this.m_save.Size = new System.Drawing.Size(75, 23);
+            this.m_save.Size = new System.Drawing.Size(100, 28);
             this.m_save.TabIndex = 8;
             this.m_save.Text = "Save";
             this.m_save.UseVisualStyleBackColor = true;
@@ -332,9 +361,10 @@
             // m_password
             // 
             this.m_password.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Password", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.m_password.Location = new System.Drawing.Point(108, 98);
+            this.m_password.Location = new System.Drawing.Point(144, 121);
+            this.m_password.Margin = new System.Windows.Forms.Padding(4);
             this.m_password.Name = "m_password";
-            this.m_password.Size = new System.Drawing.Size(282, 20);
+            this.m_password.Size = new System.Drawing.Size(375, 22);
             this.m_password.TabIndex = 7;
             this.m_password.Text = global::QuotesDownloader.Settings.Default.Password;
             this.m_password.UseSystemPasswordChar = true;
@@ -342,45 +372,50 @@
             // m_username
             // 
             this.m_username.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Username", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.m_username.Location = new System.Drawing.Point(108, 72);
+            this.m_username.Location = new System.Drawing.Point(144, 89);
+            this.m_username.Margin = new System.Windows.Forms.Padding(4);
             this.m_username.Name = "m_username";
-            this.m_username.Size = new System.Drawing.Size(282, 20);
+            this.m_username.Size = new System.Drawing.Size(375, 22);
             this.m_username.TabIndex = 6;
             this.m_username.Text = global::QuotesDownloader.Settings.Default.Username;
             // 
             // m_address
             // 
             this.m_address.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::QuotesDownloader.Settings.Default, "Address", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.m_address.Location = new System.Drawing.Point(108, 20);
+            this.m_address.Location = new System.Drawing.Point(144, 25);
+            this.m_address.Margin = new System.Windows.Forms.Padding(4);
             this.m_address.Name = "m_address";
-            this.m_address.Size = new System.Drawing.Size(282, 20);
+            this.m_address.Size = new System.Drawing.Size(375, 22);
             this.m_address.TabIndex = 5;
             this.m_address.Text = global::QuotesDownloader.Settings.Default.Address;
             // 
             // m_passwordLabel
             // 
             this.m_passwordLabel.AutoSize = true;
-            this.m_passwordLabel.Location = new System.Drawing.Point(24, 105);
+            this.m_passwordLabel.Location = new System.Drawing.Point(32, 129);
+            this.m_passwordLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_passwordLabel.Name = "m_passwordLabel";
-            this.m_passwordLabel.Size = new System.Drawing.Size(53, 13);
+            this.m_passwordLabel.Size = new System.Drawing.Size(69, 17);
             this.m_passwordLabel.TabIndex = 3;
             this.m_passwordLabel.Text = "Password";
             // 
             // m_usernameLabel
             // 
             this.m_usernameLabel.AutoSize = true;
-            this.m_usernameLabel.Location = new System.Drawing.Point(22, 79);
+            this.m_usernameLabel.Location = new System.Drawing.Point(29, 97);
+            this.m_usernameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_usernameLabel.Name = "m_usernameLabel";
-            this.m_usernameLabel.Size = new System.Drawing.Size(55, 13);
+            this.m_usernameLabel.Size = new System.Drawing.Size(73, 17);
             this.m_usernameLabel.TabIndex = 2;
             this.m_usernameLabel.Text = "Username";
             // 
             // m_addressLabel
             // 
             this.m_addressLabel.AutoSize = true;
-            this.m_addressLabel.Location = new System.Drawing.Point(32, 27);
+            this.m_addressLabel.Location = new System.Drawing.Point(43, 33);
+            this.m_addressLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.m_addressLabel.Name = "m_addressLabel";
-            this.m_addressLabel.Size = new System.Drawing.Size(45, 13);
+            this.m_addressLabel.Size = new System.Drawing.Size(60, 17);
             this.m_addressLabel.TabIndex = 1;
             this.m_addressLabel.Text = "Address";
             // 
@@ -391,9 +426,9 @@
             // 
             // QuotesDownloader
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1080, 490);
+            this.ClientSize = new System.Drawing.Size(1440, 603);
             this.Controls.Add(this.m_connectionParameters);
             this.Controls.Add(this.m_log);
             this.Controls.Add(this.m_connection);
@@ -403,6 +438,7 @@
             this.Controls.Add(this.m_from);
             this.Controls.Add(this.m_groups);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "QuotesDownloader";
             this.Text = "SoftFX Quotes Downloader";
