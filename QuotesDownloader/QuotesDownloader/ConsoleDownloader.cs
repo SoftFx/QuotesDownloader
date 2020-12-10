@@ -81,6 +81,7 @@ namespace QuotesDownloader
 
                     var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     path = Path.Combine(path, "Quotes");
+                    path = Path.Combine(path, DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
                     Directory.CreateDirectory(path);
                     string location = path;
 

@@ -54,7 +54,7 @@ namespace QuotesDownloader
         {
             get
             {
-                return this.thread == null;
+                return this.thread == null || this.thread.IsCompleted || this.thread.IsFaulted || this.thread.IsCanceled;
             }
         }
 
