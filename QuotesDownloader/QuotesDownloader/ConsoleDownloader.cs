@@ -155,33 +155,49 @@ namespace QuotesDownloader
                         Console.WriteLine("The Quote Client is connected.");
                         Console.WriteLine("Start downloading...");
                     }
-                    Downloader downloader;
-                    if (bars)
-                        downloader = new Downloader(client, outputType, location, symbol, from, to, priceType, new BarPeriod(periodicity));
-                    else
-                        downloader = new Downloader(client, outputType, location, symbol, from, to, level2, vwap);
-                    SetSignalHandler(signal =>
+                    List<Task> tasks = new List<Task>();
+                    foreach (var _symbol in ParseSymbols(symbol))
                     {
-                        downloader?.CancelDownload();
-                    }, true);
-                    downloader.Start();
-                    while (!downloader.IsFinished)
-                        Thread.Sleep(50);
-
+                        tasks.Add(Task.Run(() =>
+                        {
+                            Console.WriteLine($"Downloading symbol {_symbol}");
+                            Downloader downloader;
+                            if (bars)
+                                downloader = new Downloader(client, outputType, location, _symbol, from, to, priceType, new BarPeriod(periodicity));
+                            else
+                                downloader = new Downloader(client, outputType, location, _symbol, from, to, level2, vwap);
+                            SetSignalHandler(signal =>
+                            {
+                                downloader?.CancelDownload();
+                            }, true);
+                            downloader.Start();
+                            while (!downloader.IsFinished)
+                                Thread.Sleep(50);
+                            Console.WriteLine($"Symbol {_symbol} downloaded successful.");
+                        }));
+                    }
+                    Task.WaitAll(tasks.ToArray());
                     if (verbose)
                         Console.WriteLine("Downloading finished successfully.");
                     client.Disconnect("Disconnecting");
                     client.Dispose();
                     if (verbose)
                         Console.WriteLine("The Quote Client is disconnected.");
+                    Console.ReadLine();
 
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error : " + ex.Message);
+                    Console.ReadLine();
                 }
             }
             FreeConsole();
+        }
+
+        private static List<string> ParseSymbols(string symbols)
+        {
+            return symbols?.Split('|').ToList();
         }
     }
 }
