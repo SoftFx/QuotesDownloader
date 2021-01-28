@@ -49,7 +49,6 @@
             this.m_logContextMenuClearItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_logContextMenuSaveItem = new System.Windows.Forms.ToolStripMenuItem();
             this.m_connectionParameters = new System.Windows.Forms.GroupBox();
-            this.m_ssl = new System.Windows.Forms.CheckBox();
             this.m_port = new System.Windows.Forms.TextBox();
             this.m_portLabel = new System.Windows.Forms.Label();
             this.m_save = new System.Windows.Forms.Button();
@@ -295,7 +294,6 @@
             // 
             // m_connectionParameters
             // 
-            this.m_connectionParameters.Controls.Add(this.m_ssl);
             this.m_connectionParameters.Controls.Add(this.m_port);
             this.m_connectionParameters.Controls.Add(this.m_portLabel);
             this.m_connectionParameters.Controls.Add(this.m_save);
@@ -313,17 +311,6 @@
             this.m_connectionParameters.TabIndex = 12;
             this.m_connectionParameters.TabStop = false;
             this.m_connectionParameters.Text = "Connection parameters";
-            // 
-            // m_ssl
-            // 
-            this.m_ssl.AutoSize = true;
-            this.m_ssl.Location = new System.Drawing.Point(299, 60);
-            this.m_ssl.Margin = new System.Windows.Forms.Padding(4);
-            this.m_ssl.Name = "m_ssl";
-            this.m_ssl.Size = new System.Drawing.Size(56, 21);
-            this.m_ssl.TabIndex = 11;
-            this.m_ssl.Text = "SSL";
-            this.m_ssl.UseVisualStyleBackColor = true;
             // 
             // m_port
             // 
@@ -479,7 +466,6 @@
         private System.Windows.Forms.Label m_usernameLabel;
         private System.Windows.Forms.Label m_addressLabel;
         private System.Windows.Forms.Button m_save;
-        private System.Windows.Forms.CheckBox m_ssl;
         private System.Windows.Forms.TextBox m_port;
         private System.Windows.Forms.Label m_portLabel;
         private System.Windows.Forms.ToolTip m_toolTip;
