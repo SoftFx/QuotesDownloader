@@ -39,11 +39,11 @@
             this.m_download = new System.Windows.Forms.Button();
             this.m_connection = new System.Windows.Forms.Button();
             this.m_groups = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.m_checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.m_storageType = new System.Windows.Forms.ComboBox();
             this.m_quotesType = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.m_checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.m_log = new System.Windows.Forms.ListBox();
             this.m_LogContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.m_logContextMenuClearItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +59,8 @@
             this.m_usernameLabel = new System.Windows.Forms.Label();
             this.m_addressLabel = new System.Windows.Forms.Label();
             this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.m_searchBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             this.m_groups.SuspendLayout();
             this.m_LogContextMenu.SuspendLayout();
@@ -68,7 +70,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(561, 160);
+            label1.Location = new System.Drawing.Point(549, 56);
             label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(86, 17);
@@ -159,9 +161,7 @@
             // 
             // m_groups
             // 
-            this.m_groups.Controls.Add(this.button1);
             this.m_groups.Controls.Add(this.progressBar1);
-            this.m_groups.Controls.Add(this.m_checkedListBox);
             this.m_groups.Controls.Add(this.m_storageType);
             this.m_groups.Controls.Add(label1);
             this.m_groups.Controls.Add(this.m_quotesType);
@@ -176,17 +176,6 @@
             this.m_groups.TabIndex = 10;
             this.m_groups.TabStop = false;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(537, 31);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(111, 42);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "select all";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(156, 86);
@@ -197,22 +186,11 @@
             this.progressBar1.Visible = false;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
-            // m_checkedListBox
-            // 
-            this.m_checkedListBox.CheckOnClick = true;
-            this.m_checkedListBox.FormattingEnabled = true;
-            this.m_checkedListBox.Location = new System.Drawing.Point(656, 11);
-            this.m_checkedListBox.Margin = new System.Windows.Forms.Padding(4);
-            this.m_checkedListBox.Name = "m_checkedListBox";
-            this.m_checkedListBox.Size = new System.Drawing.Size(159, 72);
-            this.m_checkedListBox.TabIndex = 10;
-            this.m_checkedListBox.SelectedIndexChanged += new System.EventHandler(this.m_checkedListBox_SelectedIndexChanged);
-            // 
             // m_storageType
             // 
             this.m_storageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.m_storageType.FormattingEnabled = true;
-            this.m_storageType.Location = new System.Drawing.Point(656, 150);
+            this.m_storageType.Location = new System.Drawing.Point(656, 49);
             this.m_storageType.Margin = new System.Windows.Forms.Padding(4);
             this.m_storageType.Name = "m_storageType";
             this.m_storageType.Size = new System.Drawing.Size(160, 24);
@@ -249,12 +227,34 @@
             "Ask D1",
             "Ask W1",
             "Ask MN1"});
-            this.m_quotesType.Location = new System.Drawing.Point(655, 111);
+            this.m_quotesType.Location = new System.Drawing.Point(656, 14);
             this.m_quotesType.Margin = new System.Windows.Forms.Padding(4);
             this.m_quotesType.Name = "m_quotesType";
             this.m_quotesType.Size = new System.Drawing.Size(160, 24);
             this.m_quotesType.TabIndex = 0;
             this.m_quotesType.SelectedIndexChanged += new System.EventHandler(this.m_quotesType_SelectedIndexChanged);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1245, 548);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(111, 42);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "select all";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // m_checkedListBox
+            // 
+            this.m_checkedListBox.CheckOnClick = true;
+            this.m_checkedListBox.FormattingEnabled = true;
+            this.m_checkedListBox.Location = new System.Drawing.Point(1175, 270);
+            this.m_checkedListBox.Margin = new System.Windows.Forms.Padding(4);
+            this.m_checkedListBox.Name = "m_checkedListBox";
+            this.m_checkedListBox.Size = new System.Drawing.Size(252, 276);
+            this.m_checkedListBox.TabIndex = 10;
+            this.m_checkedListBox.SelectedIndexChanged += new System.EventHandler(this.m_checkedListBox_SelectedIndexChanged);
             // 
             // m_log
             // 
@@ -266,7 +266,7 @@
             this.m_log.Margin = new System.Windows.Forms.Padding(4);
             this.m_log.Name = "m_log";
             this.m_log.ScrollAlwaysVisible = true;
-            this.m_log.Size = new System.Drawing.Size(1407, 372);
+            this.m_log.Size = new System.Drawing.Size(1122, 372);
             this.m_log.TabIndex = 11;
             // 
             // m_LogContextMenu
@@ -411,11 +411,31 @@
             this.m_toolTip.ToolTipTitle = "Invalid port number";
             this.m_toolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.m_toolTip_Popup);
             // 
+            // m_searchBox
+            // 
+            this.m_searchBox.Location = new System.Drawing.Point(1245, 241);
+            this.m_searchBox.Name = "m_searchBox";
+            this.m_searchBox.Size = new System.Drawing.Size(179, 22);
+            this.m_searchBox.TabIndex = 13;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1182, 244);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 17);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Search:";
+            // 
             // QuotesDownloader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1440, 603);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.m_searchBox);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.m_checkedListBox);
             this.Controls.Add(this.m_connectionParameters);
             this.Controls.Add(this.m_log);
             this.Controls.Add(this.m_connection);
@@ -473,5 +493,7 @@
         private System.Windows.Forms.CheckedListBox m_checkedListBox;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox m_searchBox;
+        private System.Windows.Forms.Label label2;
     }
 }

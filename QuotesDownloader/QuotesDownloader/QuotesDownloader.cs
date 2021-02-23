@@ -25,6 +25,8 @@
         bool isDownloaded = false;
         private string currentLocation;
         private DateTime startDownload;
+        private Dictionary<string, bool> _symbols;
+        private object searchLocker;
 
         public static bool isCanceled = false;
 
@@ -40,6 +42,8 @@
             this.m_storageType.Items.Add("hdf5");
             this.m_storageType.Items.Add("csv_zip");
             this.m_storageType.SelectedIndex = 0;
+            this.m_searchBox.TextChanged += SearchMethod;
+            this.m_checkedListBox.ItemCheck += SymbolChecked;
 
             var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             path = Path.Combine(path, "Quotes");
@@ -54,6 +58,8 @@
             this.m_dateAndTimeFrom.Value = from;
             this.m_dateAndTimeTo.Value = to;
             this.ApplyDisconnectedState();
+            _symbols = new Dictionary<string, bool>();
+            searchLocker = new object();
         }
 
         void OnBrowse(object sender, EventArgs e)
@@ -252,6 +258,7 @@
             foreach (var symbol in symbols)
             {
                 this.m_checkedListBox.Items.Add(symbol);
+                _symbols.Add(symbol, false);
             }
             this.Log("Symbols information is received");
             this.ApplyConnectedState();
@@ -275,6 +282,7 @@
                 this.m_browse.Enabled = true;
                 this.m_checkedListBox.Enabled = true;
                 this.m_quotesType.Enabled = true;
+                this.m_searchBox.Enabled = true;
                 if(m_quotesType.SelectedIndex != 2)
                     this.m_storageType.Enabled = true;
                 downloadsList.Clear();
@@ -287,6 +295,7 @@
             this.m_download.Text = "Break";
             this.m_browse.Enabled = false;
             this.m_checkedListBox.Enabled = false;
+            this.m_searchBox.Enabled = false;
             this.m_quotesType.Enabled = false;
             this.m_storageType.Enabled = false;
             this.progressBar1.Visible = true;
@@ -298,9 +307,9 @@
             startDownload = DateTime.Now;
             currentLocation = this.m_location.Text + "\\" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             downloadsList.Clear();
-            for (int i = 0; i <  m_checkedListBox.CheckedItems.Count; i++)
+            foreach(var item in _symbols.Where(x => x.Value == true).ToList())
             {
-                DownloadQuote(m_checkedListBox.CheckedItems[i].ToString());
+                DownloadQuote(item.Key);
             }
             foreach(var download in downloadsList)
             {
@@ -359,6 +368,32 @@
             }
         }
 
+        private void SearchMethod(object sender, EventArgs e)
+        {
+            m_checkedListBox.Items.Clear();
+            if (string.IsNullOrEmpty(m_searchBox.Text))
+            {
+                foreach (var symbol in _symbols.ToList())
+                {
+                    m_checkedListBox.Items.Add(symbol.Key, symbol.Value);
+                }
+                return;
+            }
+            foreach (var symbol in _symbols.Keys.ToList().Where(x => x.ToLower().Contains(m_searchBox.Text.ToLower())).ToList())
+            {
+                m_checkedListBox.Items.Add(symbol, _symbols[symbol]);
+            }
+        }
+
+        private void SymbolChecked(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == e.CurrentValue)
+                return;
+            var symbol = m_checkedListBox.Items[e.Index].ToString();
+            if(_symbols.ContainsKey(symbol))
+                _symbols[symbol] = e.NewValue == CheckState.Checked;
+        }
+
         void OnFinish(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
@@ -371,7 +406,7 @@
                 ((Downloader)sender).Wait();
             }
             progressBar1.PerformStep();
-            if(progressBar1.Value == m_checkedListBox.CheckedItems.Count)
+            if(progressBar1.Value == _symbols.Where(x => x.Value == true).ToList().Count())
             {
                 var duration = DateTime.Now - startDownload;
                 GetSpeed();
@@ -379,6 +414,7 @@
                 progressBar1.Visible = false;
                 this.m_browse.Enabled = true;
                 this.m_checkedListBox.Enabled = true;
+                this.m_searchBox.Enabled = true;
                 this.m_quotesType.Enabled = true;
                 if(m_quotesType.SelectedIndex != 2)
                     this.m_storageType.Enabled = true;
