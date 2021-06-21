@@ -212,7 +212,7 @@ namespace QuotesDownloader
                 int chunkCount = 0;
                 double[,,] quotesArr = new double[chunkSize, 2, 2];
                 long[] datesArr = new long[chunkSize];
-                H5DataSpaceId memSpace;
+                H5DataSpaceId memSpace = null;
                 for (Quote quote = enumerator.Next(-1); quote != null; quote = enumerator.Next(-1))
                 {
                     int j = 0;
@@ -246,6 +246,7 @@ namespace QuotesDownloader
                         memSpace = H5S.create_simple(3, new long[] {chunkSize, 2, 2});
                         H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
                             new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
+                        H5S.close(memSpace);
 
                         H5D.setExtent(dateQuotesSetId, new long[] {count});
                         H5S.close(dateQuotesSpaceId);
@@ -256,6 +257,7 @@ namespace QuotesDownloader
                         H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
                             new H5PropertyListId(H5P.Template.DEFAULT),
                             new H5Array<long>(datesArr));
+                        H5S.close(memSpace);
                         chunkCount = 0;
                     }
                 }
@@ -272,6 +274,7 @@ namespace QuotesDownloader
                     memSpace = H5S.create_simple(3, new long[] {delta, 2, 2});
                     H5D.write(quotesSetId, quotesTypeId, memSpace, quotesSpaceId,
                         new H5PropertyListId(H5P.Template.DEFAULT), new H5Array<double>(quotesArr));
+                    H5S.close(memSpace);
 
                     H5D.setExtent(dateQuotesSetId, new long[] {count});
                     H5S.close(dateQuotesSpaceId);
@@ -282,6 +285,7 @@ namespace QuotesDownloader
                     H5D.write(dateQuotesSetId, dateQuotesTypeId, memSpace, dateQuotesSpaceId,
                         new H5PropertyListId(H5P.Template.DEFAULT),
                         new H5Array<long>(datesArr));
+                    H5S.close(memSpace);
                 }
                 
                 H5P.close(createChunkedQuotes);
@@ -294,6 +298,7 @@ namespace QuotesDownloader
                 H5D.close(quotesSetId);
                 H5S.close(dateQuotesSpaceId);
                 H5D.close(dateQuotesSetId);
+                //H5S.close(memSpace);
 
                 H5F.close(fileId);
                 if(includeLevel2)
@@ -308,6 +313,8 @@ namespace QuotesDownloader
                 {
                     this.Log($"Ticks {symbol} are downloaded successfully");
                 }
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
             else if (outputType == "csv_zip")
             {
