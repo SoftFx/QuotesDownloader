@@ -1,0 +1,15 @@
+Package: RTTQDClient
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: Yury Maisiayonak
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: R Wrapper for TickTrader QuotesDownloader tool.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    R6,
+    data.table,
+    lubridate
+RoxygenNote: 7.1.1
